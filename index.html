@@ -2,469 +2,311 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Daniel: El Desafío Profético</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMOS | Consultorio Médico Odontológico SHALOM</title>
+    
+    <!-- FAVICON - REEMPLAZA EL HREF POR LA RUTA DE TU ICONO -->
+    <link rel="icon" type="image/png" href="tu-logo-aqui.png">
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Iconos de FontAwesome para el Instagram y Música -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- AOS Animaciones -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deepBlue: '#0052CC',
+                        brightBlue: '#007BFF',
+                        skyBlue: '#E6F0FF',
+                        accentGold: '#D4AF37',
+                    },
+                }
+            }
+        }
+    </script>
 
     <style>
-        :root { --gold: #d4af37; --bg-dark: #080808; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-dark); color: #f0f0f0; margin: 0; overflow-x: hidden; height: 100vh; }
-        .font-royal { font-family: 'Cinzel', serif; }
-        
-        #video-bg-container { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; overflow: hidden; }
-        #video-bg-container video { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.3); }
-
-        #intro-overlay, .fullscreen-video { position: fixed; inset: 0; z-index: 1000; background: black; display: flex; align-items: center; justify-content: center; transition: opacity 1s; }
-        
-        .btn-gold { 
-            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 45%, #b38728 100%); 
-            color: #1a1a1a; font-weight: 800; transition: all 0.3s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4); text-transform: uppercase;
+        .blue-gradient { background: linear-gradient(135deg, #007BFF 0%, #0052CC 100%); }
+        .pulse-whatsapp { animation: pulse-blue 2s infinite; }
+        @keyframes pulse-blue {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(0, 123, 255, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
         }
-        
-        .card-glass { background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(212, 175, 55, 0.15); }
-        .level-card { position: relative; aspect-ratio: 16/9; overflow: hidden; border-radius: 1.2rem; border: 2px solid rgba(212, 175, 55, 0.2); }
-        .level-card.locked { filter: grayscale(1) opacity(0.4); }
-
-        .gold-heart { color: var(--gold); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); margin-right: 5px; }
-        
-        /* Ajuste para que el Quiz no se salga en móviles */
-        #view-game { min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 100px; }
-        
-        .results-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; align-items: center; padding: 2rem; overflow-y: auto; }
-
-        .hidden { display: none !important; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
-
-        /* Estilo Footer */
-        .footer-anclado { 
-            width: 100%; text-align: center; padding: 15px; 
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            color: var(--gold); font-size: 10px; letter-spacing: 2px;
-            z-index: 50;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
-
-        /* Botón Música */
-        #music-toggle {
-            position: fixed; top: 20px; right: 20px; z-index: 1100;
-            background: rgba(0,0,0,0.5); border: 1px solid var(--gold);
-            color: var(--gold); width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        .service-btn:hover {
+            transform: translateY(-5px);
+            border-color: #007BFF;
+            background: #ffffff;
         }
+        #chat-window { display: none; }
+        html { scroll-behavior: smooth; }
     </style>
 </head>
-<body>
+<body class="font-sans text-gray-900 bg-[#F4F7FA] overflow-x-hidden">
 
-    <!-- AUDIO DEL JUEGO -->
-    <audio id="game-music" loop>
-        <source src="musica.mp3" type="audio/mpeg">
-    </audio>
+    <!-- BOTÓN WHATSAPP FLOTANTE -->
+    <a href="https://wa.me/582123220926?text=Hola%2C%20deseo%20agendar%20mi%20CONSULTA%20GRATUITA.%20Entiendo%20que%20la%20primera%20cita%20es%20sin%20costo%20y%20luego%20decidir%C3%A9%20mi%20tratamiento.%20%C2%A1Gracias%21" 
+       target="_blank" 
+       class="fixed bottom-6 right-6 z-50 pulse-whatsapp blue-gradient text-white px-5 py-3 rounded-2xl flex items-center gap-3 font-bold shadow-2xl">
+        <i class="fab fa-whatsapp text-2xl"></i>
+        <span class="hidden md:inline">Agendar Consulta Gratis</span>
+    </a>
 
-    <div id="music-toggle" onclick="toggleMusic()">
-        <i id="music-icon" class="fa-solid fa-volume-xmark"></i>
-    </div>
-
-    <!-- VIDEO FONDO -->
-    <div id="video-bg-container">
-        <video id="bg-video-loop" loop playsinline muted><source src="intro.mp4" type="video/mp4"></video>
-    </div>
-
-    <!-- PANTALLAS DE VIDEO FULLSCREEN (VICTORIA / DERROTA) -->
-    <div id="video-outcome" class="fullscreen-video hidden">
-        <video id="outcome-player" playsinline class="w-full h-full object-cover"></video>
-        <div class="absolute bottom-10 w-full text-center">
-            <button onclick="closeOutcomeVideo()" class="btn-gold px-10 py-4 rounded-full">Volver al Campamento</button>
+    <!-- CHATBOT ROBOT CMOS -->
+    <div class="fixed bottom-6 left-6 z-50">
+        <button onclick="toggleChat()" class="bg-white p-4 rounded-full shadow-xl border-2 border-brightBlue hover:scale-110 transition">
+            <i class="fas fa-robot text-brightBlue text-2xl"></i>
+        </button>
+        <div id="chat-window" class="absolute bottom-20 left-0 w-80 bg-white rounded-3xl shadow-2xl overflow-hidden border border-skyBlue flex flex-col">
+            <div class="blue-gradient p-4 text-white font-bold flex justify-between items-center">
+                <span>Asistente CMOS 🤖</span>
+                <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="chat-content" class="h-80 p-4 overflow-y-auto text-sm space-y-3 bg-gray-50">
+                <p class="bg-skyBlue p-2 rounded-lg">¡Bendiciones! Soy el asistente de CMOS. ¿Qué servicio buscas?</p>
+            </div>
+            <div class="p-2 grid grid-cols-2 gap-2 bg-white border-t">
+                <button onclick="botReply('servicios')" class="text-[10px] bg-gray-100 p-2 rounded-md hover:bg-skyBlue font-bold tracking-tighter">Servicios Disponibles</button>
+                <button onclick="botReply('consulta')" class="text-[10px] bg-brightBlue text-white p-2 rounded-md hover:bg-deepBlue font-bold tracking-tighter">Cita Gratis</button>
+            </div>
         </div>
     </div>
 
-    <!-- INTRO -->
-    <div id="intro-overlay">
-        <video id="intro-video" playsinline autoplay muted loop class="w-full h-full object-cover"><source src="intro.mp4" type="video/mp4"></video>
-        <button onclick="endIntro()" class="absolute bottom-10 btn-gold px-8 py-4 rounded-full text-sm">Entrar a la Batalla</button>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main-content" class="relative z-10 opacity-0 transition-opacity duration-1000 h-full flex flex-col">
-        
-        <div class="flex-grow">
-            <!-- LOGIN -->
-            <div id="view-login" class="h-full flex flex-col items-center justify-center p-6">
-                <h1 class="font-royal text-5xl md:text-8xl mb-2 text-yellow-500 text-center drop-shadow-2xl">DANIEL</h1>
-                <p class="text-[10px] tracking-[0.6em] mb-12 text-zinc-400 uppercase">El Desafío Profético</p>
-                <div class="card-glass p-8 rounded-[2rem] w-full max-w-sm">
-                    <input type="text" id="login-name" placeholder="Tu Nombre" class="w-full bg-black/50 border border-zinc-800 p-4 rounded-xl mb-4 text-center text-lg text-white outline-none">
-                    <div id="admin-pass-container" class="hidden">
-                        <input type="password" id="login-pass" placeholder="Clave de Mando" class="w-full bg-black/50 border border-zinc-800 p-4 rounded-xl mb-4 text-center text-white outline-none">
-                    </div>
-                    <button onclick="handleAuth()" class="btn-gold w-full py-4 rounded-xl text-lg font-bold">Comenzar</button>
-                    <button onclick="toggleAdminField()" class="text-[10px] mt-6 text-zinc-600 underline uppercase block mx-auto tracking-widest">Acceso Administrador</button>
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-skyBlue">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 blue-gradient rounded-2xl flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-tooth text-2xl"></i>
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-2xl font-black text-deepBlue tracking-tighter">CMOS</span>
+                    <span class="text-[10px] font-bold text-accentGold tracking-[0.1em] uppercase">Shalom</span>
                 </div>
             </div>
-
-            <!-- MAPA NIVELES -->
-            <div id="view-levels" class="hidden min-h-screen p-4 overflow-y-auto">
-                <header class="flex justify-between items-center mb-6 max-w-7xl mx-auto">
-                    <h2 class="font-royal text-2xl text-white">MISIONES</h2>
-                    <button onclick="location.reload()" class="bg-red-900/20 text-red-500 px-4 py-2 rounded-lg text-xs font-bold border border-red-900/50">SALIR</button>
-                </header>
-                <div id="level-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-7xl mx-auto"></div>
+            <div class="hidden md:flex space-x-8 items-center font-bold text-gray-600">
+                <a href="#inicio" class="hover:text-brightBlue transition">Inicio</a>
+                <a href="#servicios" class="hover:text-brightBlue transition">Servicios</a>
+                <a href="#nosotros" class="hover:text-brightBlue transition">Doctores</a>
+                <a href="#contacto" class="bg-brightBlue text-white px-6 py-3 rounded-2xl shadow-lg hover:bg-deepBlue transition-all">CONSULTA GRATIS</a>
             </div>
+        </div>
+    </nav>
 
-            <!-- LOBBY / SALA ESPERA -->
-            <div id="view-lobby" class="hidden h-screen flex flex-col p-4 max-w-4xl mx-auto overflow-hidden">
-                <div class="card-glass p-4 rounded-2xl mb-4 flex flex-col gap-3 justify-between items-center">
-                    <h2 id="lobby-title" class="font-royal text-xl text-yellow-500 uppercase">SALA DE ESPERA</h2>
-                    <div id="access-code-prompt" class="hidden flex gap-2 w-full">
-                        <input type="text" id="join-code-input" placeholder="CÓDIGO" class="flex-1 bg-black border border-yellow-600/50 p-3 rounded-xl text-center text-yellow-500 font-bold outline-none">
-                        <button onclick="validateAccessCode()" class="btn-gold px-6 rounded-xl">Entrar</button>
-                    </div>
-                    <button id="admin-back-btn" onclick="showView('admin')" class="hidden w-full bg-zinc-800 py-2 rounded-lg text-xs uppercase font-bold text-zinc-300">Panel Admin</button>
-                </div>
-                <div class="flex-1 card-glass rounded-2xl p-4 mb-4 overflow-y-auto" id="chat-messages"></div>
-                <div class="flex gap-2 pb-4">
-                    <input type="text" id="chat-input" placeholder="Escribe..." class="flex-1 bg-black border border-zinc-800 p-4 rounded-2xl text-white outline-none">
-                    <button onclick="sendChatMessage()" class="btn-gold px-6 rounded-2xl">Enviar</button>
-                </div>
-            </div>
-
-            <!-- TABLA DE RESULTADOS GLOBAL -->
-            <div id="global-results" class="results-overlay hidden">
-                <h2 class="font-royal text-4xl text-yellow-500 mb-8 mt-10">RECUENTO</h2>
-                <div id="results-list" class="w-full max-w-2xl space-y-4"></div>
-            </div>
-
-            <!-- QUIZ -->
-            <div id="view-game" class="hidden overflow-y-auto h-full">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <div id="game-lives" class="flex text-xl"></div>
-                        <div class="text-right"><span id="game-score" class="text-2xl font-bold text-yellow-500 font-royal">0</span></div>
-                    </div>
-                    <div class="card-glass p-6 md:p-8 rounded-[2rem] flex flex-col min-h-[450px]">
-                        <p id="q-index" class="text-center text-[10px] text-yellow-600 font-bold mb-4 tracking-widest uppercase"></p>
-                        <h3 id="q-text" class="text-lg md:text-2xl text-center font-semibold mb-6 leading-tight"></h3>
-                        <div id="options-grid" class="grid grid-cols-1 gap-3"></div>
-                        <p id="q-cita" class="mt-6 text-center italic text-xs text-zinc-500 hidden"></p>
-                    </div>
+    <!-- HERO SECTION -->
+    <section id="inicio" class="relative min-h-[80vh] flex items-center pt-10 pb-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+                <h1 class="text-5xl md:text-7xl font-black text-deepBlue leading-none mb-6">
+                    Sonrisas con fe, <br>
+                    <span class="text-transparent bg-clip-text blue-gradient text-4xl md:text-6xl">y amor al prójimo</span>
+                </h1>
+                <p class="text-xl text-gray-600 mb-10 leading-relaxed">
+                    En el Consultorio Médico Odontológico Shalom, confiamos en Dios y en todo su proceso para devolverte la salud dental.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#contacto" class="blue-gradient text-white px-10 py-5 rounded-[2rem] font-black shadow-2xl hover:scale-105 transition-transform text-center">
+                        SOLICITAR MI CITA GRATIS
+                    </a>
                 </div>
             </div>
+            <div class="relative" data-aos="zoom-in">
+                <div class="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-white">
+                    <img src="https://images.unsplash.com/photo-1629909608135-ca29e00ad4d9?auto=format&fit=crop&w=800&q=80" alt="Clinica CMOS">
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <!-- ADMIN -->
-            <div id="view-admin" class="hidden min-h-screen p-4 overflow-y-auto">
-                <div class="max-w-7xl mx-auto pb-20">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-                        <button onclick="showView('lobby')" class="w-full md:w-auto bg-blue-900/40 text-blue-400 px-6 py-3 rounded-xl border border-blue-900 font-bold text-[10px] uppercase">Sala de Espera</button>
-                        <h2 class="font-royal text-3xl text-red-600">SALA DE GUERRA</h2>
-                        <button onclick="resetGlobalSystem()" class="w-full md:w-auto bg-red-900/40 text-red-400 px-6 py-3 rounded-xl border border-red-900 font-bold text-[10px] uppercase">Limpiar Todo</button>
-                    </div>
+    <!-- SECCIÓN SERVICIOS (BOTONES DIRECTOS A WHATSAPP) -->
+    <section id="servicios" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black text-deepBlue mb-4">Nuestros Servicios</h2>
+                <p class="text-accentGold font-black uppercase tracking-widest text-sm">Haz clic en el servicio para agendar tu cita gratis</p>
+            </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="card-glass p-5 rounded-2xl">
-                            <h3 class="text-yellow-500 font-royal mb-4 border-b border-zinc-800 pb-2 text-sm uppercase">Configurar</h3>
-                            <select id="adm-level-sel" class="w-full bg-black border border-zinc-800 p-3 rounded-xl mb-3 text-white">
-                                <script>for(let i=1;i<=12;i++) document.write(`<option value="${i}">Capítulo ${i}</option>`)</script>
-                            </select>
-                            <input type="file" id="adm-img-input" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
-                            <button onclick="document.getElementById('adm-img-input').click()" class="w-full bg-zinc-800 text-white p-3 rounded-xl text-[10px] mb-4 uppercase font-bold">Imagen Local</button>
-                            
-                            <div class="space-y-4">
-                                <button onclick="toggleResults(true)" class="w-full bg-yellow-600 text-black py-3 rounded-xl font-bold uppercase text-xs">Resultados Globales</button>
-                                <button onclick="toggleResults(false)" class="w-full bg-zinc-800 text-white py-3 rounded-xl font-bold uppercase text-xs">Quitar Resultados</button>
-                                <button onclick="activateLevel()" class="btn-gold w-full py-5 rounded-xl text-lg mt-6">Activar Nivel</button>
-                                <div id="adm-active-code" class="text-center text-4xl font-bold text-yellow-500 tracking-widest mt-4"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Helper para generar los enlaces -->
+                <script>
+                    const services = [
+                        { name: "Odontología General e Infantil", icon: "fa-users" },
+                        { name: "Endodoncia / Tratamiento de Conducto", icon: "fa-microscope" },
+                        { name: "Restauraciones", icon: "fa-fill-drip" },
+                        { name: "Coronas", icon: "fa-crown" },
+                        { name: "Prótesis: Uniflex, Fijas y Removibles", icon: "fa-teeth" },
+                        { name: "Blanqueamiento Dental", icon: "fa-wand-sparkles" },
+                        { name: "Ortodoncia y Ortopedia", icon: "fa-grip-lines" },
+                        { name: "Cirugía de Cordales", icon: "fa-syringe" },
+                        { name: "Tratamientos de Encías", icon: "fa-band-aid" },
+                        { name: "Aplicación de Flúor", icon: "fa-droplet" },
+                        { name: "Otro Servicio o Consulta Especial", icon: "fa-plus-circle" }
+                    ];
+
+                    const baseMsg = "Hola, deseo agendar mi CONSULTA GRATUITA para el servicio de: ";
+                    const endMsg = ". Entiendo que la primera cita es sin costo y luego decidiré mi tratamiento. ¡Gracias!";
+
+                    document.write(services.map(s => `
+                        <a href="https://wa.me/582123220926?text=${encodeURIComponent(baseMsg + s.name + endMsg)}" 
+                           target="_blank" 
+                           class="service-btn glass-card p-6 rounded-3xl border-2 border-skyBlue flex items-center gap-4 shadow-sm hover:shadow-xl group"
+                           data-aos="fade-up">
+                            <div class="w-14 h-14 blue-gradient rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg group-hover:scale-110 transition">
+                                <i class="fas ${s.icon} text-xl"></i>
                             </div>
-                        </div>
+                            <span class="font-bold text-deepBlue leading-tight">${s.name}</span>
+                        </a>
+                    `).join(''));
+                </script>
+            </div>
+        </div>
+    </section>
 
-                        <div class="card-glass p-5 rounded-2xl">
-                            <h3 class="text-yellow-500 font-royal mb-4 border-b border-zinc-800 pb-2 text-sm uppercase">Excel</h3>
-                            <input type="file" id="adm-excel" accept=".xlsx" class="hidden" onchange="processExcel(this)">
-                            <button onclick="document.getElementById('adm-excel').click()" class="w-full py-10 border-2 border-dashed border-zinc-800 rounded-xl text-zinc-500 font-bold text-center text-[10px]">SUBIR .XLSX</button>
-                            <div id="adm-levels-status" class="grid grid-cols-2 gap-2 mt-6 text-[8px]"></div>
-                        </div>
-
-                        <div class="card-glass p-5 rounded-2xl">
-                            <h3 class="text-yellow-500 font-royal mb-4 border-b border-zinc-800 pb-2 text-sm uppercase">Ranking</h3>
-                            <div id="adm-monitor" class="space-y-2"></div>
-                        </div>
+    <!-- SECCIÓN DOCTORES (DOS DOCTORES) -->
+    <section id="nosotros" class="py-24 bg-skyBlue/30">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black text-deepBlue mb-4">Nuestro Equipo Médico</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto font-bold italic">"Confiamos en Dios y en todo su proceso para cuidar de ti."</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Doctor 1 -->
+                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-t-8 border-accentGold flex flex-col md:flex-row gap-6 items-center" data-aos="fade-up">
+                    <img src="https://i.pravatar.cc/300?u=doc1" alt="Doctor 1" class="w-40 h-40 rounded-3xl object-cover shadow-2xl border-4 border-skyBlue">
+                    <div>
+                        <h4 class="text-2xl font-black text-deepBlue">Dr. Nombre Apellido</h4>
+                        <p class="text-accentGold font-bold mb-4">Especialista en Odontología</p>
+                        <p class="text-sm text-gray-500 leading-relaxed italic">"Dedicado a servir con amor y excelencia, poniendo cada paciente en manos del Señor."</p>
+                    </div>
+                </div>
+                
+                <!-- Doctor 2 -->
+                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-t-8 border-accentGold flex flex-col md:flex-row gap-6 items-center" data-aos="fade-up" data-aos-delay="200">
+                    <img src="https://i.pravatar.cc/300?u=doc2" alt="Doctor 2" class="w-40 h-40 rounded-3xl object-cover shadow-2xl border-4 border-skyBlue">
+                    <div>
+                        <h4 class="text-2xl font-black text-deepBlue">Dra. Nombre Apellido</h4>
+                        <p class="text-accentGold font-bold mb-4">Especialista en Estética</p>
+                        <p class="text-sm text-gray-500 leading-relaxed italic">"La sonrisa es el reflejo del alma, cuidamos la tuya con fe y tecnología."</p>
                     </div>
                 </div>
             </div>
+
+            <div class="mt-20 text-center" data-aos="zoom-in">
+                <div class="blue-gradient p-10 rounded-[3rem] text-white max-w-3xl mx-auto shadow-2xl">
+                    <i class="fas fa-church text-4xl mb-6 text-accentGold"></i>
+                    <h3 class="text-2xl font-black mb-4 italic">Un Consultorio con Propósito</h3>
+                    <p class="text-blue-100 leading-relaxed">En CMOS Shalom, no solo somos profesionales de la salud; somos servidores de Dios dispuestos a brindarte paz en cada visita.</p>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <!-- FOOTER ANCLADO -->
-        <footer class="footer-anclado">
-            DESARROLLADO POR - ROBERT PARACO 2026 
-            <a href="https://instagram.com/TU_USUARIO" target="_blank" class="ml-2 hover:opacity-70 transition">
-                <i class="fa-brands fa-instagram text-base align-middle"></i>
-            </a>
-        </footer>
-    </div>
+    <!-- CONTACTO SECCIÓN DE CIERRE -->
+    <section id="contacto" class="py-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="bg-deepBlue rounded-[4rem] p-12 text-white text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-10 shadow-2xl">
+                <div class="md:w-2/3">
+                    <h2 class="text-4xl font-black mb-4 tracking-tighter">¿Listo para recuperar tu sonrisa?</h2>
+                    <p class="text-blue-100 text-lg font-bold italic">Recuerda: Tu evaluación inicial es GRATIS. Decide tu tratamiento con total libertad.</p>
+                </div>
+                <a href="https://wa.me/582123220926?text=Hola%2C%20deseo%20agendar%20mi%20CONSULTA%20GRATUITA.%20Entiendo%20que%20la%20primera%20cita%20es%20sin%20costo%20y%20luego%20decidir%C3%A9%20mi%20tratamiento.%20%C2%A1Gracias%21" 
+                   class="bg-white text-deepBlue px-10 py-6 rounded-3xl font-black text-xl hover:scale-105 transition shadow-2xl text-center">
+                    AGENDAR POR WHATSAPP
+                </a>
+            </div>
+        </div>
+    </section>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot, updateDoc, collection, addDoc, query, orderBy, limit, getDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <!-- FOOTER CON VIDEO E INFO GENERAL -->
+    <footer class="bg-white pt-24 pb-12 border-t border-skyBlue">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 mb-20 items-start">
+                <!-- Información General -->
+                <div data-aos="fade-up">
+                    <h4 class="text-3xl font-black text-deepBlue mb-8">Información General</h4>
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-skyBlue flex items-center justify-center text-brightBlue"><i class="fas fa-clinic-medical"></i></div>
+                            <p class="font-bold text-gray-700">CMOS: Consultorio Médico Odontológico Shalom</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-skyBlue flex items-center justify-center text-brightBlue"><i class="fas fa-map-marker-alt"></i></div>
+                            <p class="font-bold text-gray-700">Los Teques, Estado Miranda, Venezuela.</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-skyBlue flex items-center justify-center text-brightBlue"><i class="fas fa-phone"></i></div>
+                            <p class="font-bold text-gray-700">Central: 0212-3220926</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600"><i class="fas fa-check-circle"></i></div>
+                            <p class="font-black text-green-600 uppercase tracking-tighter italic text-xl">Consulta Inicial GRATIS</p>
+                        </div>
+                    </div>
+                </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCEBobrmLT4Icvjn81GZx1FtkTS9IU2XsI",
-            authDomain: "batalladaniel-5ce50.firebaseapp.com",
-            projectId: "batalladaniel-5ce50",
-            storageBucket: "batalladaniel-5ce50.firebasestorage.app",
-            messagingSenderId: "799596753792",
-            appId: "1:799596753792:web:90b549b0757cc5481b4765"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+                <!-- Video Section -->
+                <div data-aos="fade-up">
+                    <h4 class="text-3xl font-black text-deepBlue mb-8 text-center">Nuestras Instalaciones</h4>
+                    <div class="aspect-video bg-gray-200 rounded-[3rem] overflow-hidden shadow-2xl relative border-8 border-white">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="CMOS Shalom Video" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
 
-        let userState = { name: '', isAdmin: false, lives: 3, score: 0, qIndex: 0, dead: false, startTime: 0, totalTime: 0 };
-        let gameConfig = { activeLevel: 0, activeCode: '', status: 'waiting', showResults: false };
-        let levelImages = {};
-        
-        // --- VIDEOS ---
-        const VID_VICTORY = "https://assets.mixkit.co/videos/preview/mixkit-golden-confetti-falling-on-a-black-background-4148-large.mp4";
-        const VID_DEFEAT = "https://assets.mixkit.co/videos/preview/mixkit-fire-and-smoke-4122-large.mp4";
+            <div class="pt-12 text-center">
+                <div class="flex flex-col items-center gap-4">
+                    <span class="text-2xl font-black text-deepBlue">CMOS SHALOM</span>
+                    <div class="flex gap-6 text-2xl text-brightBlue">
+                        <a href="#" class="hover:text-accentGold transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-accentGold transition"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="hover:text-accentGold transition"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                    <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.4em] mt-6">Cuidamos tu sonrisa en el nombre del Señor | CMOS 2026</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-        const introVid = document.getElementById('intro-video');
-        const bgLoop = document.getElementById('bg-video-loop');
-        const gameMusic = document.getElementById('game-music');
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
 
-        window.endIntro = () => {
-            document.getElementById('intro-overlay').classList.add('fade-out');
-            document.getElementById('main-content').classList.remove('opacity-0');
-            bgLoop.play().catch(()=>{});
-            startMusic();
-        };
+        function toggleChat() {
+            const chat = document.getElementById('chat-window');
+            chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
+        }
 
-        // --- MUSICA ---
-        let isMusicPlaying = false;
-        window.toggleMusic = () => {
-            if(isMusicPlaying) {
-                gameMusic.pause();
-                document.getElementById('music-icon').className = "fa-solid fa-volume-xmark";
-            } else {
-                gameMusic.play();
-                document.getElementById('music-icon').className = "fa-solid fa-volume-high";
+        function botReply(topic) {
+            const content = document.getElementById('chat-content');
+            let reply = "";
+
+            switch(topic) {
+                case 'servicios': reply = "Amén. Ofrecemos Ortodoncia, Endodoncia, Prótesis, Cirugía y más. ¡Haz clic en cualquiera de la lista arriba para agendar gratis!"; break;
+                case 'consulta': reply = "¡Bendiciones! Nuestra primera evaluación es GRATUITA. Queremos servirte primero. Toca el botón de WhatsApp abajo."; break;
+                case 'ubicacion': reply = "Estamos en el centro de Los Teques. Un lugar de paz para tu salud dental."; break;
+                case 'horario': reply = "Lunes a Sábado, 8 AM - 5 PM. Te esperamos con los brazos abiertos."; break;
             }
-            isMusicPlaying = !isMusicPlaying;
-        };
-        function startMusic() {
-            gameMusic.play().then(() => {
-                isMusicPlaying = true;
-                document.getElementById('music-icon').className = "fa-solid fa-volume-high";
-            }).catch(() => {});
-        }
 
-        // --- AUTH ---
-        window.handleAuth = async () => {
-            const name = document.getElementById('login-name').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
-            if (!name) return;
-
-            if (name.toLowerCase() === 'admin' && pass === "Daniel777") {
-                userState.isAdmin = true;
-                document.getElementById('admin-back-btn').classList.remove('hidden');
-                initAdmin(); return;
-            }
-
-            userState.name = name;
-            await setDoc(doc(db, "players", name), { name, score:0, qIndex:0, lives:3, dead:false, time:0 });
-            showView('levels');
-            syncGlobal();
-        };
-
-        function syncGlobal() {
-            onSnapshot(doc(db, "config", "game"), (snap) => {
-                const data = snap.data(); if(!data) return;
-                gameConfig = data;
-                renderLevelGrid();
-                const resOverlay = document.getElementById('global-results');
-                if(data.showResults) { resOverlay.classList.remove('hidden'); updateGlobalResultsList(); }
-                else { resOverlay.classList.add('hidden'); }
-                document.getElementById('access-code-prompt').classList.toggle('hidden', data.status !== 'active');
-            });
-
-            onSnapshot(collection(db, "chat"), (snap) => {
-                const box = document.getElementById('chat-messages'); box.innerHTML = "";
-                snap.docs.reverse().forEach(d => {
-                    const m = d.data();
-                    box.innerHTML += `<div class="mb-3 text-xs bg-white/5 p-2 rounded-lg"><b class="text-yellow-600">${m.user}:</b> <span class="text-zinc-300">${m.text}</span></div>`;
-                });
-                box.scrollTop = box.scrollHeight;
-            });
-
-            onSnapshot(doc(db, "config", "images"), (snap) => {
-                levelImages = snap.data() || {};
-                renderLevelGrid();
-            });
-        }
-
-        async function updateGlobalResultsList() {
-            const players = await getDocs(collection(db, "players"));
-            const list = []; players.forEach(d => list.push(d.data()));
-            list.sort((a, b) => b.score - a.score || a.time - b.time);
-            const container = document.getElementById('results-list'); container.innerHTML = "";
-            list.slice(0, 10).forEach((p, i) => {
-                container.innerHTML += `<div class="flex justify-between p-4 card-glass rounded-xl w-full"><span>#${i+1} ${p.name}</span><span>${p.score} PTS</span></div>`;
-            });
-        }
-
-        function renderLevelGrid() {
-            const grid = document.getElementById('level-grid'); if(!grid) return;
-            grid.innerHTML = "";
-            for(let i=1; i<=12; i++) {
-                const isActive = (gameConfig.activeLevel == i && gameConfig.status === 'active');
-                const img = levelImages[i] || "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500";
-                grid.innerHTML += `
-                    <div class="level-card ${isActive ? '' : 'locked'}" onclick="${isActive ? 'enterLobby()' : 'alertLocked()'}">
-                        <img src="${img}" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 flex items-center justify-center font-royal text-4xl text-white/30">${i}</div>
-                        ${isActive ? '<div class="absolute inset-0 border-2 border-yellow-500 animate-pulse rounded-xl"></div>' : ''}
-                    </div>`;
-            }
-        }
-
-        window.enterLobby = () => { showView('lobby'); };
-        window.alertLocked = () => Swal.fire("Sellado", "El Rey no ha dado la orden.", "warning");
-        window.validateAccessCode = () => {
-            if(document.getElementById('join-code-input').value.trim() === gameConfig.activeCode) startQuiz();
-            else Swal.fire("Código Erróneo", "", "error");
-        };
-
-        // --- QUIZ ---
-        async function startQuiz() {
-            const snap = await getDoc(doc(db, "levels", "lvl_" + gameConfig.activeLevel));
-            if(!snap.exists()) return;
-            const qs = snap.data().questions.sort(() => Math.random() - 0.5).slice(0, 20);
-            userState.lives = 3; userState.qIndex = 0; userState.score = 0; userState.startTime = Date.now();
-            showView('game'); runQuiz(qs);
-        }
-
-        function runQuiz(qs) {
-            if(userState.qIndex >= qs.length || userState.lives <= 0) { finishBattle(); return; }
-            const q = qs[userState.qIndex];
-            document.getElementById('q-index').innerText = `DESAFÍO ${userState.qIndex+1}/20`;
-            document.getElementById('q-text').innerText = q.Pregunta;
-            // VIDAS DORADAS
-            document.getElementById('game-lives').innerHTML = `<i class="fa-solid fa-heart gold-heart"></i>`.repeat(userState.lives);
-            document.getElementById('game-score').innerText = userState.score;
-            
-            const grid = document.getElementById('options-grid'); grid.innerHTML = "";
-            [q.Correcta, q.Inc1, q.Inc2, q.Inc3].sort(() => Math.random() - 0.5).forEach(o => {
-                const b = document.createElement('button');
-                b.className = "btn-option p-4 rounded-xl text-left text-sm font-bold uppercase";
-                b.innerText = o;
-                b.onclick = () => {
-                    if(o === q.Correcta) { userState.score += 100; userState.qIndex++; }
-                    else { userState.lives--; userState.qIndex++; }
-                    updateStats(); runQuiz(qs);
-                };
-                grid.appendChild(b);
-            });
-        }
-
-        async function updateStats() {
-            userState.totalTime = Math.floor((Date.now() - userState.startTime)/1000);
-            await updateDoc(doc(db, "players", userState.name), { score: userState.score, qIndex: userState.qIndex, lives: userState.lives, dead: userState.lives<=0, time: userState.totalTime });
-        }
-
-        function finishBattle() {
-            const win = userState.lives > 0;
-            const player = document.getElementById('outcome-player');
-            const overlay = document.getElementById('video-outcome');
-            player.src = win ? VID_VICTORY : VID_DEFEAT;
-            overlay.classList.remove('hidden'); player.play();
-        }
-
-        window.closeOutcomeVideo = () => {
-            document.getElementById('video-outcome').classList.add('hidden');
-            document.getElementById('outcome-player').pause();
-            showView('lobby');
-        };
-
-        // --- ADMIN ---
-        function initAdmin() {
-            showView('admin');
-            onSnapshot(collection(db, "players"), (snap) => {
-                const m = document.getElementById('adm-monitor'); m.innerHTML = "";
-                let ps = []; snap.forEach(d => ps.push(d.data()));
-                ps.sort((a,b) => b.score - a.score || a.time - b.time).forEach(p => {
-                    m.innerHTML += `<div class="p-2 border border-zinc-800 rounded flex justify-between text-[9px] uppercase">
-                        <span class="${p.dead?'text-red-500':'text-yellow-500'}">${p.name}</span>
-                        <span>${p.score} PTS | ${p.time}s</span>
-                    </div>`;
-                });
-            });
-            refreshAdminStatus();
-        }
-
-        window.handleImageUpload = (input) => {
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const lvl = document.getElementById('adm-level-sel').value;
-                const up = {}; up[lvl] = e.target.result;
-                await setDoc(doc(db, "config", "images"), up, { merge: true });
-                Swal.fire("Imagen Guardada", "", "success");
-            };
-            reader.readAsDataURL(input.files[0]);
-        };
-
-        window.activateLevel = async () => {
-            const lvl = document.getElementById('adm-level-sel').value;
-            const code = Math.floor(1000 + Math.random() * 9000).toString();
-            await setDoc(doc(db, "config", "game"), { activeLevel: lvl, activeCode: code, status: 'active', showResults: false });
-            document.getElementById('adm-active-code').innerText = code;
-        };
-
-        window.toggleResults = async (val) => { await updateDoc(doc(db, "config", "game"), { showResults: val }); };
-
-        window.sendChatMessage = async () => {
-            const i = document.getElementById('chat-input'); if(!i.value.trim()) return;
-            await addDoc(collection(db, "chat"), { user: userState.isAdmin ? '👑 ADMIN' : userState.name, text: i.value, time: Date.now() });
-            i.value = "";
-        };
-
-        window.processExcel = (input) => {
-            const lvl = document.getElementById('adm-level-sel').value;
-            const r = new FileReader();
-            r.onload = async (e) => {
-                const book = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-                const json = XLSX.utils.sheet_to_json(book.Sheets[book.SheetNames[0]]);
-                await setDoc(doc(db, "levels", "lvl_" + lvl), { questions: json });
-                refreshAdminStatus(); Swal.fire("Excel Cargado", "", "success");
-            };
-            r.readAsArrayBuffer(input.files[0]);
-        };
-
-        async function refreshAdminStatus() {
-            const grid = document.getElementById('adm-levels-status'); if(!grid) return;
-            grid.innerHTML = "";
-            for(let i=1; i<=12; i++) {
-                const s = await getDoc(doc(db, "levels", "lvl_" + i));
-                grid.innerHTML += `<div class="p-1 border border-zinc-800 text-center">L${i}: ${s.exists()?'✅':'❌'}</div>`;
-            }
-        }
-
-        window.resetGlobalSystem = async () => {
-            const confirm = await Swal.fire({ title: '¿REINICIAR TODO?', icon: 'warning', showCancelButton: true });
-            if(!confirm.isConfirmed) return;
-            const players = await getDocs(collection(db, "players"));
-            players.forEach(async d => await deleteDoc(doc(db, "players", d.id)));
-            const chat = await getDocs(collection(db, "chat"));
-            chat.forEach(async d => await deleteDoc(doc(db, "chat", d.id)));
-            await updateDoc(doc(db, "config", "game"), { status: 'waiting', activeLevel: 0, showResults: false });
-            Swal.fire("Limpio", "", "success");
-        };
-
-        window.toggleAdminField = () => { document.getElementById('admin-pass-container').classList.toggle('hidden'); };
-
-        function showView(id) {
-            ['view-login', 'view-levels', 'view-lobby', 'view-game', 'view-admin'].forEach(v => document.getElementById(v).classList.add('hidden'));
-            document.getElementById('view-' + id).classList.remove('hidden');
+            const botMsg = document.createElement('p');
+            botMsg.className = "bg-skyBlue p-3 rounded-2xl text-deepBlue font-bold self-start animate-bounce shadow-sm";
+            botMsg.innerText = reply;
+            content.appendChild(botMsg);
+            content.scrollTop = content.scrollHeight;
+            setTimeout(() => { botMsg.classList.remove('animate-bounce'); }, 1000);
         }
     </script>
 </body>
