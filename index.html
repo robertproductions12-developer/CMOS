@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMOS | Consultorio Médico Odontológico SHALOM</title>
-    
-    <!-- FAVICON - REEMPLAZA EL HREF POR LA RUTA DE TU ICONO -->
+
+    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="ghhhg.png">
 
     <!-- Tailwind CSS -->
@@ -17,129 +17,365 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        deepBlue: '#0052CC',
-                        brightBlue: '#007BFF',
-                        skyBlue: '#E6F0FF',
-                        accentGold: '#D4AF37',
-                    },
-                }
-            }
-        }
-    </script>
-
     <style>
-        .blue-gradient { background: linear-gradient(135deg, #007BFF 0%, #0052CC 100%); }
-        .pulse-whatsapp { animation: pulse-blue 2s infinite; }
-        @keyframes pulse-blue {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(0, 123, 255, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+        /* ===== CONFIGURACIÓN DE COLORES ===== */
+        :root {
+            --deepBlue: #0A2F6C;
+            --brightBlue: #1A73E8;
+            --skyBlue: #E8F1FD;
+            --accentGold: #D4AF37;
+            --goldLight: #F0D060;
+            --whiteSoft: #F9FCFF;
         }
+
+        .blue-gradient {
+            background: linear-gradient(135deg, var(--brightBlue) 0%, var(--deepBlue) 100%);
+        }
+
+        .gold-text {
+            color: var(--accentGold);
+        }
+
+        .gold-border {
+            border-color: var(--accentGold);
+        }
+
+        .gold-gradient {
+            background: linear-gradient(135deg, var(--accentGold), var(--goldLight));
+        }
+
+        .pulse-whatsapp {
+            animation: pulse-blue 2.5s infinite;
+        }
+
+        @keyframes pulse-blue {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.6); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 25px rgba(26, 115, 232, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(26, 115, 232, 0); }
+        }
+
+        /* ===== ANIMACIÓN DE FONDO BLANCO-AZUL ===== */
+        .bg-animated {
+            background: linear-gradient(135deg, #ffffff 0%, var(--skyBlue) 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 12s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ===== ANIMACIÓN DEL DIENTE ===== */
+        .tooth-icon {
+            animation: toothFloat 3s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes toothFloat {
+            0% { transform: translateY(0px) rotate(0deg) scale(1); }
+            25% { transform: translateY(-8px) rotate(-8deg) scale(1.05); }
+            50% { transform: translateY(0px) rotate(0deg) scale(1); }
+            75% { transform: translateY(-5px) rotate(8deg) scale(1.03); }
+            100% { transform: translateY(0px) rotate(0deg) scale(1); }
+        }
+
+        /* ===== TARJETAS CON EFECTO CRISTAL ===== */
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px rgba(10, 47, 108, 0.08);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(10, 47, 108, 0.15);
+            border-color: var(--accentGold);
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        /* ===== CHATBOT ===== */
+        #chat-window {
+            display: none;
+            width: 340px;
+            max-height: 480px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 25px 60px rgba(10, 47, 108, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             transition: all 0.3s ease;
         }
-        .service-btn:hover {
-            transform: translateY(-5px);
-            border-color: #007BFF;
-            background: #ffffff;
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--deepBlue), var(--brightBlue));
+            border-radius: 28px 28px 0 0;
+            padding: 1rem 1.5rem;
         }
-        #chat-window { display: none; }
-        html { scroll-behavior: smooth; }
+
+        .chat-message {
+            animation: fadeSlide 0.4s ease;
+        }
+
+        @keyframes fadeSlide {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== BOTONES ===== */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brightBlue), var(--deepBlue));
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(26, 115, 232, 0.4);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--accentGold), var(--goldLight));
+            color: var(--deepBlue);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gold:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.5);
+        }
+
+        /* ===== BOTÓN VIDEOLLAMADA ===== */
+        .btn-videocall {
+            background: linear-gradient(135deg, #00C853, #00E676);
+            color: white;
+            transition: all 0.3s ease;
+            animation: pulse-green 2s infinite;
+        }
+
+        .btn-videocall:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(0, 200, 83, 0.4);
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 200, 83, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); }
+        }
+
+        /* ===== MODAL VIDEOLLAMADA ===== */
+        #videocall-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #videocall-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 2rem;
+            max-width: 480px;
+            width: 90%;
+            padding: 2.5rem;
+            animation: modalPop 0.4s ease;
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.8) translateY(30px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        @media (max-width: 640px) {
+            #chat-window {
+                width: 290px;
+                max-height: 400px;
+                bottom: 80px;
+                left: 10px;
+            }
+        }
     </style>
 </head>
-<body class="font-sans text-gray-900 bg-[#F4F7FA] overflow-x-hidden">
+<body class="font-sans text-gray-800 bg-animated overflow-x-hidden">
 
-    <!-- BOTÓN WHATSAPP FLOTANTE -->
-    <a href="https://wa.me/582123220926?text=Hola%2C%20deseo%20agendar%20mi%20CONSULTA%20GRATUITA.%20Entiendo%20que%20la%20primera%20cita%20es%20sin%20costo%20y%20luego%20decidir%C3%A9%20mi%20tratamiento.%20%C2%A1Gracias%21" 
-       target="_blank" 
-       class="fixed bottom-6 right-6 z-50 pulse-whatsapp blue-gradient text-white px-5 py-3 rounded-2xl flex items-center gap-3 font-bold shadow-2xl">
+    <!-- ==================== BOTÓN WHATSAPP FLOTANTE ==================== -->
+    <a href="https://wa.me/582123220926?text=Hola%2C%20deseo%20agendar%20mi%20CONSULTA%20GRATUITA.%20Entiendo%20que%20la%20primera%20cita%20es%20sin%20costo%20y%20luego%20decidir%C3%A9%20mi%20tratamiento.%20%C2%A1Gracias%21"
+       target="_blank"
+       class="fixed bottom-6 right-6 z-50 pulse-whatsapp blue-gradient text-white px-6 py-4 rounded-2xl flex items-center gap-3 font-bold shadow-2xl hover:scale-105 transition-all duration-300">
         <i class="fab fa-whatsapp text-2xl"></i>
         <span class="hidden md:inline">Agendar Consulta Gratis</span>
+        <span class="md:hidden"><i class="fas fa-chevron-right"></i></span>
     </a>
 
-    <!-- CHATBOT ROBOT CMOS -->
+    <!-- ==================== BOTÓN VIDEOLLAMADA (CITA EXPRESS) ==================== -->
+    <button onclick="openVideocall()"
+            class="fixed bottom-24 left-6 z-50 btn-videocall px-5 py-3 rounded-2xl flex items-center gap-3 font-bold shadow-2xl hover:scale-105 transition-all duration-300">
+        <i class="fas fa-video text-xl"></i>
+        <span class="hidden md:inline">Cita Express 📹</span>
+        <span class="md:hidden"><i class="fas fa-arrow-right"></i></span>
+    </button>
+
+    <!-- ==================== MODAL VIDEOLLAMADA ==================== -->
+    <div id="videocall-modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-black text-deepBlue flex items-center gap-2">
+                    <i class="fas fa-video gold-text"></i>
+                    <span>Cita Express</span>
+                </h3>
+                <button onclick="closeVideocall()" class="text-gray-400 hover:text-gray-600 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <p class="text-gray-600 mb-6">
+                Agenda una videollamada rápida con nuestros especialistas. <span class="gold-text font-bold">¡Primera cita GRATIS!</span>
+            </p>
+
+            <div class="space-y-4">
+                <div class="flex gap-3 items-center p-3 bg-skyBlue/30 rounded-xl">
+                    <i class="fas fa-calendar-check gold-text text-xl"></i>
+                    <span class="text-sm font-medium">Duración: 15-20 minutos</span>
+                </div>
+                <div class="flex gap-3 items-center p-3 bg-skyBlue/30 rounded-xl">
+                    <i class="fas fa-clock gold-text text-xl"></i>
+                    <span class="text-sm font-medium">Disponible: Lun-Vie 8am-4pm</span>
+                </div>
+            </div>
+
+            <div class="mt-6 grid grid-cols-2 gap-3">
+                <a href="https://wa.me/582123220926?text=Hola%2C%20deseo%20agendar%20una%20VIDEOLLAMADA%20EXPRESS%20para%20mi%20consulta.%20%C2%A1Gracias!"
+                   target="_blank"
+                   class="btn-gold text-center py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all">
+                    <i class="fab fa-whatsapp mr-2"></i> Agendar
+                </a>
+                <a href="https://meet.google.com/new"
+                   target="_blank"
+                   class="btn-primary text-white text-center py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all">
+                    <i class="fab fa-google mr-2"></i> Google Meet
+                </a>
+            </div>
+
+            <button onclick="closeVideocall()" class="mt-4 text-sm text-gray-400 hover:text-gray-600 w-full text-center">
+                <i class="fas fa-arrow-left mr-1"></i> Volver
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== CHATBOT ==================== -->
     <div class="fixed bottom-6 left-6 z-50">
-        <button onclick="toggleChat()" class="bg-white p-4 rounded-full shadow-xl border-2 border-brightBlue hover:scale-110 transition">
+        <button onclick="toggleChat()" class="bg-white p-4 rounded-full shadow-2xl border-2 border-brightBlue hover:scale-110 transition-all duration-300 hover:shadow-brightBlue/30">
             <i class="fas fa-robot text-brightBlue text-2xl"></i>
         </button>
-        <div id="chat-window" class="absolute bottom-20 left-0 w-80 bg-white rounded-3xl shadow-2xl overflow-hidden border border-skyBlue flex flex-col">
-            <div class="blue-gradient p-4 text-white font-bold flex justify-between items-center">
-                <span>Asistente CMOS 🤖</span>
-                <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
+
+        <div id="chat-window" class="absolute bottom-20 left-0 flex flex-col overflow-hidden">
+            <div class="chat-header text-white flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-robot text-xl"></i>
+                    <span class="font-bold">Asistente CMOS</span>
+                </div>
+                <button onclick="toggleChat()" class="hover:rotate-90 transition duration-300">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div id="chat-content" class="h-80 p-4 overflow-y-auto text-sm space-y-3 bg-gray-50">
-                <p class="bg-skyBlue p-2 rounded-lg">¡Bendiciones! Soy el asistente de CMOS. ¿Qué servicio buscas?</p>
+
+            <div id="chat-content" class="flex-1 p-4 overflow-y-auto text-sm space-y-3 bg-gray-50/70" style="max-height: 280px;">
+                <div class="chat-message bg-skyBlue p-3 rounded-2xl rounded-tl-none text-deepBlue font-medium shadow-sm">
+                    <i class="fas fa-hand-peace mr-2 gold-text"></i> ¡Bendiciones! Soy el asistente de CMOS. ¿En qué puedo ayudarte hoy?
+                </div>
             </div>
-            <div class="p-2 grid grid-cols-2 gap-2 bg-white border-t">
-                <button onclick="botReply('servicios')" class="text-[10px] bg-gray-100 p-2 rounded-md hover:bg-skyBlue font-bold tracking-tighter">Servicios Disponibles</button>
-                <button onclick="botReply('consulta')" class="text-[10px] bg-brightBlue text-white p-2 rounded-md hover:bg-deepBlue font-bold tracking-tighter">Cita Gratis</button>
+
+            <div class="p-3 bg-white border-t border-skyBlue">
+                <div class="flex gap-2 mb-2">
+                    <input id="chat-input" type="text" placeholder="Escribe tu pregunta..."
+                           class="flex-1 text-sm rounded-xl px-3 py-2 border border-gray-200 focus:outline-none focus:border-gold transition">
+                    <button onclick="sendUserMessage()" class="gold-gradient text-deepBlue px-4 rounded-xl hover:scale-105 transition font-bold">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-3 gap-1.5">
+                    <button onclick="botReply('servicios')" class="text-[10px] bg-gray-100 p-1.5 rounded-lg hover:bg-skyBlue font-bold text-deepBlue transition">Servicios</button>
+                    <button onclick="botReply('consulta')" class="btn-gold text-deepBlue p-1.5 rounded-lg font-bold text-[10px] transition">Cita Gratis</button>
+                    <button onclick="botReply('ubicacion')" class="text-[10px] bg-gray-100 p-1.5 rounded-lg hover:bg-skyBlue font-bold text-deepBlue transition">Ubicación</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- NAVBAR -->
-    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-skyBlue">
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-skyBlue/50 shadow-sm">
         <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 blue-gradient rounded-2xl flex items-center justify-center text-white shadow-lg">
-                    <i class="fas fa-tooth text-2xl"></i>
+                <!-- DIENTE ANIMADO -->
+                <div class="w-14 h-14 blue-gradient rounded-2xl flex items-center justify-center text-white shadow-lg">
+                    <i class="fas fa-tooth text-2xl tooth-icon"></i>
                 </div>
                 <div class="flex flex-col leading-none">
                     <span class="text-2xl font-black text-deepBlue tracking-tighter">CMOS</span>
-                    <span class="text-[10px] font-bold text-accentGold tracking-[0.1em] uppercase">Shalom</span>
+                    <span class="text-[10px] font-bold gold-text tracking-[0.1em] uppercase">Shalom</span>
                 </div>
             </div>
             <div class="hidden md:flex space-x-8 items-center font-bold text-gray-600">
-                <a href="#inicio" class="hover:text-brightBlue transition">Inicio</a>
-                <a href="#servicios" class="hover:text-brightBlue transition">Servicios</a>
-                <a href="#nosotros" class="hover:text-brightBlue transition">Doctores</a>
-                <a href="#contacto" class="bg-brightBlue text-white px-6 py-3 rounded-2xl shadow-lg hover:bg-deepBlue transition-all">CONSULTA GRATIS</a>
+                <a href="#inicio" class="hover:gold-text transition">Inicio</a>
+                <a href="#servicios" class="hover:gold-text transition">Servicios</a>
+                <a href="#nosotros" class="hover:gold-text transition">Doctores</a>
+                <a href="#contacto" class="btn-primary text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-2xl transition-all">CONSULTA GRATIS</a>
             </div>
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
+    <!-- ==================== HERO ==================== -->
     <section id="inicio" class="relative min-h-[80vh] flex items-center pt-10 pb-20 overflow-hidden">
         <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-            <div data-aos="fade-right">
+            <div data-aos="fade-right" data-aos-duration="1000">
                 <h1 class="text-5xl md:text-7xl font-black text-deepBlue leading-none mb-6">
                     Sonrisas con fe, <br>
-                    <span class="text-transparent bg-clip-text blue-gradient text-4xl md:text-6xl">y amor al prójimo</span>
+                    <span class="gold-text text-4xl md:text-6xl">y amor al prójimo</span>
                 </h1>
                 <p class="text-xl text-gray-600 mb-10 leading-relaxed">
                     En el Consultorio Médico Odontológico Shalom, confiamos en Dios y en todo su proceso para devolverte la salud dental.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="#contacto" class="blue-gradient text-white px-10 py-5 rounded-[2rem] font-black shadow-2xl hover:scale-105 transition-transform text-center">
+                    <a href="#contacto" class="btn-primary text-white px-10 py-5 rounded-[2rem] font-black shadow-2xl hover:shadow-2xl text-center transition-all">
                         SOLICITAR MI CITA GRATIS
                     </a>
+                    <button onclick="openVideocall()" class="btn-gold px-10 py-5 rounded-[2rem] font-black shadow-2xl hover:shadow-2xl text-center transition-all">
+                        <i class="fas fa-video mr-2"></i> CITA EXPRESS
+                    </button>
                 </div>
             </div>
-            <div class="relative" data-aos="zoom-in">
-                <div class="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-white">
-                    <img src="img.png" alt="Clinica CMOS">
+            <div class="relative" data-aos="zoom-in" data-aos-duration="1000">
+                <div class="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-white/80 backdrop-blur-sm">
+                    <img src="img.png" alt="Clinica CMOS" class="w-full h-auto">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECCIÓN SERVICIOS (BOTONES DIRECTOS A WHATSAPP) -->
-    <section id="servicios" class="py-24 bg-white">
+    <!-- ==================== SERVICIOS ==================== -->
+    <section id="servicios" class="py-24 bg-white/60 backdrop-blur-sm">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-black text-deepBlue mb-4">Nuestros Servicios</h2>
-                <p class="text-accentGold font-black uppercase tracking-widest text-sm">Haz clic en el servicio para agendar tu cita gratis</p>
+                <h2 class="text-4xl md:text-5xl font-black text-deepBlue mb-4">Nuestros <span class="gold-text">Servicios</span></h2>
+                <p class="gold-text font-black uppercase tracking-widest text-sm">Haz clic en el servicio para agendar tu cita gratis</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Helper para generar los enlaces -->
                 <script>
                     const services = [
                         { name: "Odontología General e Infantil", icon: "fa-users" },
@@ -159,11 +395,11 @@
                     const endMsg = ". Entiendo que la primera cita es sin costo y luego decidiré mi tratamiento. ¡Gracias!";
 
                     document.write(services.map(s => `
-                        <a href="https://wa.me/582123220926?text=${encodeURIComponent(baseMsg + s.name + endMsg)}" 
-                           target="_blank" 
-                           class="service-btn glass-card p-6 rounded-3xl border-2 border-skyBlue flex items-center gap-4 shadow-sm hover:shadow-xl group"
-                           data-aos="fade-up">
-                            <div class="w-14 h-14 blue-gradient rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg group-hover:scale-110 transition">
+                        <a href="https://wa.me/582123220926?text=${encodeURIComponent(baseMsg + s.name + endMsg)}"
+                           target="_blank"
+                           class="glass-card p-6 rounded-3xl flex items-center gap-4 shadow-sm hover:shadow-xl group"
+                           data-aos="fade-up" data-aos-delay="100">
+                            <div class="w-14 h-14 blue-gradient rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg group-hover:scale-110 transition duration-300">
                                 <i class="fas ${s.icon} text-xl"></i>
                             </div>
                             <span class="font-bold text-deepBlue leading-tight">${s.name}</span>
@@ -174,31 +410,31 @@
         </div>
     </section>
 
-    <!-- SECCIÓN DOCTORES (DOS DOCTORES) -->
-    <section id="nosotros" class="py-24 bg-skyBlue/30">
+    <!-- ==================== DOCTORES ==================== -->
+    <section id="nosotros" class="py-24 bg-skyBlue/20">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-black text-deepBlue mb-4">Nuestro Equipo Médico</h2>
+                <h2 class="text-4xl font-black text-deepBlue mb-4">Nuestro <span class="gold-text">Equipo Médico</span></h2>
                 <p class="text-gray-600 max-w-2xl mx-auto font-bold italic">"Confiamos en Dios y en todo su proceso para cuidar de ti."</p>
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <!-- Doctor 1 -->
-                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-t-8 border-accentGold flex flex-col md:flex-row gap-6 items-center" data-aos="fade-up">
-                    <img src="javi.png" alt="Doctor 1" class="w-40 h-40 rounded-3xl object-cover shadow-2xl border-4 border-skyBlue">
+                <div class="glass-card p-8 rounded-[3rem] shadow-xl border-t-8 gold-border flex flex-col md:flex-row gap-6 items-center" data-aos="fade-up">
+                    <img src="javi.png" alt="Doctor 1" class="w-40 h-40 rounded-3xl object-cover shadow-2xl border-4 border-white">
                     <div>
                         <h4 class="text-2xl font-black text-deepBlue">Dr. Javier Parra</h4>
-                        <p class="text-accentGold font-bold mb-4">Especialista en Odontología</p>
+                        <p class="gold-text font-bold mb-4">Especialista en Odontología</p>
                         <p class="text-sm text-gray-500 leading-relaxed italic">"Dedicado a servir con amor y excelencia, poniendo cada paciente en manos del Señor."</p>
                     </div>
                 </div>
-                
+
                 <!-- Doctor 2 -->
-                <div class="bg-white p-8 rounded-[3rem] shadow-xl border-t-8 border-accentGold flex flex-col md:flex-row gap-6 items-center" data-aos="fade-up" data-aos-delay="200">
-                    <img src="lore.png" alt="Doctor 2" class="w-40 h-40 rounded-3xl object-cover shadow-2xl border-4 border-skyBlue">
+                <div class="glass-card p-8 rounded-[3rem] shadow-xl border-t-8 gold-border flex flex-col md:flex-row gap-6 items-center" data-aos="fade-up" data-aos-delay="200">
+                    <img src="lore.png" alt="Doctor 2" class="w-40 h-40 rounded-3xl object-cover shadow-2xl border-4 border-white">
                     <div>
                         <h4 class="text-2xl font-black text-deepBlue">Dra. Lorena Llerena</h4>
-                        <p class="text-accentGold font-bold mb-4">Odontólogo General</p>
+                        <p class="gold-text font-bold mb-4">Odontólogo General</p>
                         <p class="text-sm text-gray-500 leading-relaxed italic">"La sonrisa es el reflejo del alma, cuidamos la tuya con fe y tecnología."</p>
                     </div>
                 </div>
@@ -206,7 +442,7 @@
 
             <div class="mt-20 text-center" data-aos="zoom-in">
                 <div class="blue-gradient p-10 rounded-[3rem] text-white max-w-3xl mx-auto shadow-2xl">
-                    <i class="fas fa-church text-4xl mb-6 text-accentGold"></i>
+                    <i class="fas fa-church text-4xl mb-6 gold-text"></i>
                     <h3 class="text-2xl font-black mb-4 italic">Un Consultorio con Propósito</h3>
                     <p class="text-blue-100 leading-relaxed">En CMOS Shalom, no solo somos profesionales de la salud; somos servidores de Dios dispuestos a brindarte paz en cada visita.</p>
                 </div>
@@ -214,29 +450,34 @@
         </div>
     </section>
 
-    <!-- CONTACTO SECCIÓN DE CIERRE -->
+    <!-- ==================== CONTACTO ==================== -->
     <section id="contacto" class="py-24">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="bg-deepBlue rounded-[4rem] p-12 text-white text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-10 shadow-2xl">
+            <div class="blue-gradient rounded-[4rem] p-12 text-white text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-10 shadow-2xl">
                 <div class="md:w-2/3">
-                    <h2 class="text-4xl font-black mb-4 tracking-tighter">¿Listo para recuperar tu sonrisa?</h2>
+                    <h2 class="text-4xl font-black mb-4 tracking-tighter">¿Listo para recuperar tu <span class="gold-text">sonrisa</span>?</h2>
                     <p class="text-blue-100 text-lg font-bold italic">Recuerda: Tu evaluación inicial es GRATIS. Decide tu tratamiento con total libertad.</p>
                 </div>
-                <a href="https://wa.me/582123220926?text=Hola%2C%20deseo%20agendar%20mi%20CONSULTA%20GRATUITA.%20Entiendo%20que%20la%20primera%20cita%20es%20sin%20costo%20y%20luego%20decidir%C3%A9%20mi%20tratamiento.%20%C2%A1Gracias%21" 
-                   class="bg-white text-deepBlue px-10 py-6 rounded-3xl font-black text-xl hover:scale-105 transition shadow-2xl text-center">
-                    AGENDAR POR WHATSAPP
-                </a>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="https://wa.me/582123220926?text=Hola%2C%20deseo%20agendar%20mi%20CONSULTA%20GRATUITA.%20Entiendo%20que%20la%20primera%20cita%20es%20sin%20costo%20y%20luego%20decidir%C3%A9%20mi%20tratamiento.%20%C2%A1Gracias%21"
+                       class="bg-white text-deepBlue px-10 py-6 rounded-3xl font-black text-xl hover:scale-105 transition-all shadow-2xl hover:shadow-2xl text-center">
+                        WHATSAPP
+                    </a>
+                    <button onclick="openVideocall()"
+                            class="btn-gold px-10 py-6 rounded-3xl font-black text-xl hover:scale-105 transition-all shadow-2xl text-center">
+                        <i class="fas fa-video mr-2"></i> VIDEOLLAMADA
+                    </button>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- FOOTER CON VIDEO E INFO GENERAL -->
-    <footer class="bg-white pt-24 pb-12 border-t border-skyBlue">
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-white/80 backdrop-blur-md pt-24 pb-12 border-t border-skyBlue">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-16 mb-20 items-start">
-                <!-- Información General -->
                 <div data-aos="fade-up">
-                    <h4 class="text-3xl font-black text-deepBlue mb-8">Información General</h4>
+                    <h4 class="text-3xl font-black text-deepBlue mb-8">Información <span class="gold-text">General</span></h4>
                     <div class="space-y-6">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-full bg-skyBlue flex items-center justify-center text-brightBlue"><i class="fas fa-clinic-medical"></i></div>
@@ -257,22 +498,21 @@
                     </div>
                 </div>
 
-                <!-- Video Section -->
                 <div data-aos="fade-up">
-                    <h4 class="text-3xl font-black text-deepBlue mb-8 text-center">Nuestras Instalaciones</h4>
+                    <h4 class="text-3xl font-black text-deepBlue mb-8 text-center">Nuestras <span class="gold-text">Instalaciones</span></h4>
                     <div class="aspect-video bg-gray-200 rounded-[3rem] overflow-hidden shadow-2xl relative border-8 border-white">
                         <iframe class="w-full h-full" src="video.mp4" title="CMOS Shalom Video" frameborder="0" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
 
-            <div class="pt-12 text-center">
+            <div class="pt-12 text-center border-t border-skyBlue/50">
                 <div class="flex flex-col items-center gap-4">
-                    <span class="text-2xl font-black text-deepBlue">CMOS SHALOM</span>
+                    <span class="text-2xl font-black text-deepBlue">CMOS <span class="gold-text">SHALOM</span></span>
                     <div class="flex gap-6 text-2xl text-brightBlue">
-                        <a href="https://www.instagram.com/odontologia.cmos?igsh=Ym5jMjEwNmZkZDY2" class="hover:text-accentGold transition"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="hover:text-accentGold transition"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="hover:text-accentGold transition"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.instagram.com/odontologia.cmos?igsh=Ym5jMjEwNmZkZDY2" class="hover:gold-text transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:gold-text transition"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="hover:gold-text transition"><i class="fab fa-tiktok"></i></a>
                     </div>
                     <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.4em] mt-6">Cuidamos tu sonrisa en el nombre del Señor | CMOS 2026</p>
                 </div>
@@ -280,34 +520,117 @@
         </div>
     </footer>
 
-    <!-- SCRIPTS -->
+    <!-- ==================== SCRIPTS ==================== -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 1000, once: true });
 
+        // ===== CHAT TOGGLE =====
         function toggleChat() {
             const chat = document.getElementById('chat-window');
             chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
+            if (chat.style.display === 'flex') {
+                document.getElementById('chat-input').focus();
+            }
         }
 
+        // ===== ENVIAR MENSAJE DEL USUARIO =====
+        function sendUserMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const content = document.getElementById('chat-content');
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message bg-brightBlue text-white p-3 rounded-2xl rounded-tr-none self-end max-w-[80%] ml-auto shadow-sm';
+            userMsg.innerText = text;
+            content.appendChild(userMsg);
+
+            input.value = '';
+
+            setTimeout(() => {
+                const reply = getAIResponse(text);
+                const botMsg = document.createElement('div');
+                botMsg.className = 'chat-message bg-skyBlue p-3 rounded-2xl rounded-tl-none text-deepBlue font-medium self-start max-w-[80%] shadow-sm';
+                botMsg.innerText = reply;
+                content.appendChild(botMsg);
+                content.scrollTop = content.scrollHeight;
+            }, 600);
+
+            content.scrollTop = content.scrollHeight;
+        }
+
+        // ===== RESPUESTA INTELIGENTE =====
+        function getAIResponse(text) {
+            const lower = text.toLowerCase();
+            if (lower.includes('servicio') || lower.includes('ofrecen')) {
+                return 'Ofrecemos Odontología General, Endodoncia, Ortodoncia, Prótesis, Cirugía, Blanqueamiento y más. ¿Te interesa alguno en especial?';
+            } else if (lower.includes('cita') || lower.includes('consulta') || lower.includes('gratis')) {
+                return '¡Claro! Nuestra primera evaluación es completamente GRATUITA. Solo toca el botón de WhatsApp y agenda tu cita. ¡Te esperamos!';
+            } else if (lower.includes('ubicación') || lower.includes('donde') || lower.includes('dirección')) {
+                return 'Estamos en el centro de Los Teques, Estado Miranda. Enfrente de la plaza Bolívar. ¡Un lugar de paz para tu salud dental!';
+            } else if (lower.includes('horario') || lower.includes('abren') || lower.includes('atencion')) {
+                return 'Atención de Lunes a Viernes, 7:30 AM a 4:30 PM. Los sábados solo con cita previa.';
+            } else if (lower.includes('doctor') || lower.includes('odontólogo') || lower.includes('especialista')) {
+                return 'Contamos con el Dr. Javier Parra (Especialista) y la Dra. Lorena Llerena (Odontólogo General). Ambos con amplia experiencia y vocación de servicio.';
+            } else if (lower.includes('videollamada') || lower.includes('express')) {
+                return '¡Sí! Ofrecemos Citas Express por videollamada. Toca el botón verde "Cita Express" que está en la pantalla para agendar la tuya.';
+            } else if (lower.includes('gracias')) {
+                return '¡A ti! Bendiciones. Recuerda que estamos para servirte. 😊';
+            } else {
+                return 'Gracias por tu mensaje. Para más información, no dudes en contactarnos por WhatsApp o agendar tu cita gratis. ¿Puedo ayudarte con algo más?';
+            }
+        }
+
+        // ===== BOTONES RÁPIDOS =====
         function botReply(topic) {
             const content = document.getElementById('chat-content');
-            let reply = "";
+            let reply = '';
 
-            switch(topic) {
-                case 'servicios': reply = "Amén. Ofrecemos Ortodoncia, Endodoncia, Prótesis, Cirugía y más. ¡Haz clic en cualquiera de la lista arriba para agendar gratis!"; break;
-                case 'consulta': reply = "¡Bendiciones! Nuestra primera evaluación es GRATUITA. Queremos servirte primero. Toca el botón de WhatsApp abajo."; break;
-                case 'ubicacion': reply = "Estamos en el centro de Los Teques. Un lugar de paz para tu salud dental."; break;
-                case 'horario': reply = "Lunes a Viernes, 7:30 AM - 4:30 PM. Te esperamos con los brazos abiertos."; break;
+            switch (topic) {
+                case 'servicios':
+                    reply = 'Ofrecemos Odontología General, Endodoncia, Ortodoncia, Prótesis, Cirugía, Blanqueamiento y más. ¿Te gustaría agendar una cita gratis para alguno?';
+                    break;
+                case 'consulta':
+                    reply = '¡Bendiciones! La primera evaluación es GRATUITA. Solo toca el botón de WhatsApp y agenda tu cita. ¡Estamos para servirte!';
+                    break;
+                case 'ubicacion':
+                    reply = 'Estamos en el centro de Los Teques, Estado Miranda. Enfrente de la plaza Bolívar. ¡Te esperamos con alegría!';
+                    break;
+                default:
+                    reply = '¿En qué más puedo ayudarte?';
             }
 
-            const botMsg = document.createElement('p');
-            botMsg.className = "bg-skyBlue p-3 rounded-2xl text-deepBlue font-bold self-start animate-bounce shadow-sm";
+            const botMsg = document.createElement('div');
+            botMsg.className = 'chat-message bg-skyBlue p-3 rounded-2xl rounded-tl-none text-deepBlue font-medium self-start max-w-[80%] shadow-sm';
             botMsg.innerText = reply;
             content.appendChild(botMsg);
             content.scrollTop = content.scrollHeight;
-            setTimeout(() => { botMsg.classList.remove('animate-bounce'); }, 1000);
         }
+
+        // ===== ENTER PARA ENVIAR =====
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendUserMessage();
+            }
+        });
+
+        // ===== VIDEOLLAMADA MODAL =====
+        function openVideocall() {
+            document.getElementById('videocall-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVideocall() {
+            document.getElementById('videocall-modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('videocall-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeVideocall();
+        });
     </script>
 </body>
 </html>
