@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* ===== CONFIGURACIÓN DE COLORES ===== */
         :root {
             --deepBlue: #0A2F6C;
             --brightBlue: #1A73E8;
@@ -28,51 +27,30 @@
             --whiteSoft: #F9FCFF;
         }
 
-        .blue-gradient {
-            background: linear-gradient(135deg, var(--brightBlue) 0%, var(--deepBlue) 100%);
-        }
+        .blue-gradient { background: linear-gradient(135deg, var(--brightBlue) 0%, var(--deepBlue) 100%); }
+        .gold-text { color: var(--accentGold); }
+        .gold-border { border-color: var(--accentGold); }
+        .gold-gradient { background: linear-gradient(135deg, var(--accentGold), var(--goldLight)); }
 
-        .gold-text {
-            color: var(--accentGold);
-        }
-
-        .gold-border {
-            border-color: var(--accentGold);
-        }
-
-        .gold-gradient {
-            background: linear-gradient(135deg, var(--accentGold), var(--goldLight));
-        }
-
-        .pulse-whatsapp {
-            animation: pulse-blue 2.5s infinite;
-        }
-
+        .pulse-whatsapp { animation: pulse-blue 2.5s infinite; }
         @keyframes pulse-blue {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.6); }
             70% { transform: scale(1.03); box-shadow: 0 0 0 25px rgba(26, 115, 232, 0); }
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(26, 115, 232, 0); }
         }
 
-        /* ===== ANIMACIÓN DE FONDO BLANCO-AZUL ===== */
         .bg-animated {
             background: linear-gradient(135deg, #ffffff 0%, var(--skyBlue) 100%);
             background-size: 400% 400%;
             animation: gradientShift 12s ease infinite;
         }
-
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* ===== ANIMACIÓN DEL DIENTE ===== */
-        .tooth-icon {
-            animation: toothFloat 3s ease-in-out infinite;
-            display: inline-block;
-        }
-
+        .tooth-icon { animation: toothFloat 3s ease-in-out infinite; display: inline-block; }
         @keyframes toothFloat {
             0% { transform: translateY(0px) rotate(0deg) scale(1); }
             25% { transform: translateY(-8px) rotate(-8deg) scale(1.05); }
@@ -81,7 +59,6 @@
             100% { transform: translateY(0px) rotate(0deg) scale(1); }
         }
 
-        /* ===== TARJETAS CON EFECTO CRISTAL ===== */
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -90,7 +67,6 @@
             box-shadow: 0 8px 32px rgba(10, 47, 108, 0.08);
             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-
         .glass-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 40px rgba(10, 47, 108, 0.15);
@@ -98,7 +74,6 @@
             background: rgba(255, 255, 255, 0.96);
         }
 
-        /* ===== CHATBOT ===== */
         #chat-window {
             display: none;
             width: 340px;
@@ -110,64 +85,30 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
             transition: all 0.3s ease;
         }
-
         .chat-header {
             background: linear-gradient(135deg, var(--deepBlue), var(--brightBlue));
             border-radius: 28px 28px 0 0;
             padding: 1rem 1.5rem;
         }
-
-        .chat-message {
-            animation: fadeSlide 0.4s ease;
-        }
-
+        .chat-message { animation: fadeSlide 0.4s ease; }
         @keyframes fadeSlide {
             0% { opacity: 0; transform: translateY(10px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== BOTONES ===== */
         .btn-primary {
             background: linear-gradient(135deg, var(--brightBlue), var(--deepBlue));
             transition: all 0.3s ease;
         }
-
-        .btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 30px rgba(26, 115, 232, 0.4);
-        }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 12px 30px rgba(26, 115, 232, 0.4); }
 
         .btn-gold {
             background: linear-gradient(135deg, var(--accentGold), var(--goldLight));
             color: var(--deepBlue);
             transition: all 0.3s ease;
         }
+        .btn-gold:hover { transform: scale(1.05); box-shadow: 0 12px 30px rgba(212, 175, 55, 0.5); }
 
-        .btn-gold:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.5);
-        }
-
-        /* ===== BOTÓN VIDEOLLAMADA ===== */
-        .btn-videocall {
-            background: linear-gradient(135deg, #00C853, #00E676);
-            color: white;
-            transition: all 0.3s ease;
-            animation: pulse-green 2s infinite;
-        }
-
-        .btn-videocall:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 30px rgba(0, 200, 83, 0.4);
-        }
-
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(0, 200, 83, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); }
-        }
-
-        /* ===== MODAL VIDEOLLAMADA ===== */
         #videocall-modal {
             display: none;
             position: fixed;
@@ -178,10 +119,7 @@
             justify-content: center;
             align-items: center;
         }
-
-        #videocall-modal.active {
-            display: flex;
-        }
+        #videocall-modal.active { display: flex; }
 
         .modal-content {
             background: white;
@@ -191,19 +129,16 @@
             padding: 2.5rem;
             animation: modalPop 0.4s ease;
         }
-
         @keyframes modalPop {
             0% { transform: scale(0.8) translateY(30px); opacity: 0; }
             100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
-        /* ===== NÚMEROS DEL SORTEO ===== */
         .numero-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
             gap: 8px;
         }
-
         .numero-btn {
             aspect-ratio: 1;
             border-radius: 12px;
@@ -213,19 +148,16 @@
             border: 2px solid transparent;
             cursor: pointer;
         }
-
         .numero-btn.libre {
             background: #E8F1FD;
             color: #0A2F6C;
             border-color: #1A73E8;
         }
-
         .numero-btn.libre:hover {
             background: #1A73E8;
             color: white;
             transform: scale(1.1);
         }
-
         .numero-btn.ocupado {
             background: #fee2e2;
             color: #991b1b;
@@ -233,7 +165,6 @@
             cursor: not-allowed;
             opacity: 0.7;
         }
-
         .numero-btn.seleccionado {
             background: #D4AF37;
             color: #0A2F6C;
@@ -242,7 +173,6 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
         }
 
-        /* ===== MODAL ADMIN ===== */
         #admin-modal {
             display: none;
             position: fixed;
@@ -254,11 +184,7 @@
             align-items: center;
             padding: 20px;
         }
-
-        #admin-modal.active {
-            display: flex;
-        }
-
+        #admin-modal.active { display: flex; }
         .admin-content {
             background: white;
             border-radius: 2rem;
@@ -275,35 +201,22 @@
             color: white;
             transition: all 0.3s ease;
         }
-
-        .btn-admin:hover {
-            transform: scale(1.03);
-            box-shadow: 0 12px 30px rgba(10, 47, 108, 0.4);
-        }
+        .btn-admin:hover { transform: scale(1.03); box-shadow: 0 12px 30px rgba(10, 47, 108, 0.4); }
 
         .btn-danger {
             background: linear-gradient(135deg, #dc2626, #ef4444);
             color: white;
             transition: all 0.3s ease;
         }
-
-        .btn-danger:hover {
-            transform: scale(1.03);
-            box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4);
-        }
+        .btn-danger:hover { transform: scale(1.03); box-shadow: 0 12px 30px rgba(220, 38, 38, 0.4); }
 
         .btn-success {
             background: linear-gradient(135deg, #16a34a, #22c55e);
             color: white;
             transition: all 0.3s ease;
         }
+        .btn-success:hover { transform: scale(1.03); box-shadow: 0 12px 30px rgba(22, 163, 74, 0.4); }
 
-        .btn-success:hover {
-            transform: scale(1.03);
-            box-shadow: 0 12px 30px rgba(22, 163, 74, 0.4);
-        }
-
-        /* ===== TICKET GANADOR ===== */
         .ticket-box {
             background: linear-gradient(135deg, #0A2F6C, #1A73E8);
             border-radius: 2rem;
@@ -313,7 +226,6 @@
             border: 4px dashed #D4AF37;
             animation: modalPop 0.6s ease;
         }
-
         .ticket-number {
             font-size: 5rem;
             font-weight: 900;
@@ -322,7 +234,6 @@
             line-height: 1;
         }
 
-        /* ===== BADGE SORTEO ===== */
         .badge-sorteo {
             display: inline-block;
             background: linear-gradient(135deg, #D4AF37, #F0D060);
@@ -335,14 +246,12 @@
             letter-spacing: 0.1em;
             animation: pulse-gold 2s infinite;
         }
-
         @keyframes pulse-gold {
             0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); }
             70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
             100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
         }
 
-        /* ===== LISTA PARTICIPANTES ===== */
         .participante-row {
             display: flex;
             justify-content: space-between;
@@ -353,21 +262,40 @@
             border: 1px solid #E8F1FD;
             transition: all 0.2s ease;
         }
-
-        .participante-row:hover {
-            background: #E8F1FD;
-            border-color: #D4AF37;
-        }
-
+        .participante-row:hover { background: #E8F1FD; border-color: #D4AF37; }
         .ganador-row {
             background: #fef9c3 !important;
             border-color: #D4AF37 !important;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
 
-        html {
-            scroll-behavior: smooth;
+        /* ===== INDICADOR LIVE ===== */
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #dc2626;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: white;
+            animation: livePulse 1.5s infinite;
+        }
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        html { scroll-behavior: smooth; }
 
         @media (max-width: 640px) {
             #chat-window {
@@ -380,13 +308,8 @@
                 grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
                 gap: 6px;
             }
-            .numero-btn {
-                font-size: 0.75rem;
-                border-radius: 10px;
-            }
-            .ticket-number {
-                font-size: 3.5rem;
-            }
+            .numero-btn { font-size: 0.75rem; border-radius: 10px; }
+            .ticket-number { font-size: 3.5rem; }
         }
     </style>
 </head>
@@ -401,13 +324,7 @@
         <span class="md:hidden"><i class="fas fa-chevron-right"></i></span>
     </a>
 
-    <!-- ==================== BOTÓN VIDEOLLAMADA (CITA EXPRESS) ==================== -->
-    <button onclick="openVideocall()"
-            class="fixed bottom-24 left-6 z-50 btn-videocall px-5 py-3 rounded-2xl flex items-center gap-3 font-bold shadow-2xl hover:scale-105 transition-all duration-300">
-        <i class="fas fa-video text-xl"></i>
-        <span class="hidden md:inline">Cita Express 📹</span>
-        <span class="md:hidden"><i class="fas fa-arrow-right"></i></span>
-    </button>
+    <!-- ⚠️ EL BOTÓN FLOTANTE VERDE DE VIDEOLLAMADA FUE ELIMINADO AQUÍ -->
 
     <!-- ==================== MODAL VIDEOLLAMADA ==================== -->
     <div id="videocall-modal">
@@ -492,7 +409,6 @@
                     </button>
                 </div>
 
-                <!-- Crear Sorteo -->
                 <div class="bg-skyBlue/30 rounded-2xl p-5 mb-6">
                     <h4 class="font-black text-deepBlue mb-3"><i class="fas fa-plus-circle gold-text mr-2"></i>Crear / Reiniciar Sorteo</h4>
                     <div class="flex flex-col sm:flex-row gap-3">
@@ -506,7 +422,6 @@
                     </div>
                 </div>
 
-                <!-- Acciones -->
                 <div class="flex flex-wrap gap-3 mb-6">
                     <button onclick="reiniciarSorteo()" class="btn-danger px-5 py-3 rounded-xl font-bold text-sm">
                         <i class="fas fa-redo mr-2"></i> Reiniciar Sorteo
@@ -519,7 +434,6 @@
                     </button>
                 </div>
 
-                <!-- Ganador actual -->
                 <div id="admin-ganador-box" class="hidden mb-6">
                     <h4 class="font-black text-deepBlue mb-3"><i class="fas fa-trophy gold-text mr-2"></i>Ganador del Sorteo</h4>
                     <div class="ticket-box">
@@ -530,7 +444,6 @@
                     </div>
                 </div>
 
-                <!-- Lista de participantes -->
                 <div>
                     <div class="flex justify-between items-center mb-3">
                         <h4 class="font-black text-deepBlue"><i class="fas fa-users gold-text mr-2"></i>Participantes (<span id="admin-total">0</span>)</h4>
@@ -588,7 +501,6 @@
     <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-skyBlue/50 shadow-sm">
         <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <!-- DIENTE ANIMADO -->
                 <div class="w-14 h-14 blue-gradient rounded-2xl flex items-center justify-center text-white shadow-lg">
                     <i class="fas fa-tooth text-2xl tooth-icon"></i>
                 </div>
@@ -604,12 +516,10 @@
                 <a href="#nosotros" class="hover:gold-text transition">Doctores</a>
                 <a href="#contacto" class="btn-primary text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-2xl transition-all">CONSULTA GRATIS</a>
             </div>
-            <!-- Menú móvil -->
             <button onclick="toggleMobileMenu()" class="md:hidden text-2xl text-deepBlue">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
-        <!-- Menú móvil desplegable -->
         <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-xl border-t border-skyBlue px-6 py-4 space-y-3">
             <a href="#inicio" onclick="toggleMobileMenu()" class="block font-bold text-gray-600 hover:gold-text transition">Inicio</a>
             <a href="#servicios" onclick="toggleMobileMenu()" class="block font-bold text-gray-600 hover:gold-text transition">Servicios</a>
@@ -692,7 +602,6 @@
 
     <!-- ==================== PROMOCIONES / SORTEO ==================== -->
     <section id="promociones" class="py-24 bg-gradient-to-br from-skyBlue/40 via-white to-skyBlue/30 relative overflow-hidden">
-        <!-- Decoración de fondo -->
         <div class="absolute top-10 right-10 opacity-10">
             <i class="fas fa-gift text-[200px] text-deepBlue"></i>
         </div>
@@ -701,7 +610,6 @@
         </div>
 
         <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <!-- Encabezado del sorteo -->
             <div class="text-center mb-12" data-aos="fade-up">
                 <div class="badge-sorteo mb-4">🎉 Sorteo Especial 🎉</div>
                 <h2 class="text-4xl md:text-5xl font-black text-deepBlue mb-4">
@@ -710,13 +618,19 @@
                 <p class="text-gray-600 max-w-2xl mx-auto text-lg mb-4">
                     Participa y llévate una limpieza dental completamente gratis en CMOS Shalom.
                 </p>
-                <div id="sorteo-fecha-display" class="inline-block blue-gradient text-white px-8 py-4 rounded-2xl font-black shadow-xl">
-                    <i class="fas fa-calendar-alt gold-text mr-2"></i>
-                    <span id="fecha-sorteo-texto">Resultados: Por definir</span>
+                <div class="flex flex-wrap justify-center items-center gap-3 mb-4">
+                    <div id="sorteo-fecha-display" class="inline-block blue-gradient text-white px-8 py-4 rounded-2xl font-black shadow-xl">
+                        <i class="fas fa-calendar-alt gold-text mr-2"></i>
+                        <span id="fecha-sorteo-texto">Resultados: Por definir</span>
+                    </div>
+                    <div class="live-indicator" id="live-indicator">
+                        <span class="live-dot"></span>
+                        <span>EN VIVO</span>
+                    </div>
                 </div>
+                <p class="text-xs text-gray-400 mt-2" id="ultima-actualizacion">Actualizado: hace un momento</p>
             </div>
 
-            <!-- Contenido del sorteo -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
                 <!-- Formulario -->
                 <div class="glass-card p-8 rounded-[3rem] shadow-2xl" data-aos="fade-right">
@@ -745,21 +659,18 @@
                             </div>
                         </div>
 
-                        <!-- Cuadro de números -->
                         <div id="cuadro-numeros" class="hidden mt-6">
                             <div class="flex justify-between items-center mb-3">
                                 <span class="text-sm font-bold text-deepBlue">Números libres (<span id="contador-libres">500</span>)</span>
                                 <span class="text-xs text-gray-400"><span class="text-red-500">●</span> Ocupado</span>
                             </div>
                             <div id="grid-numeros" class="numero-grid max-h-80 overflow-y-auto p-2 bg-white/50 rounded-2xl">
-                                <!-- Se genera con JS -->
                             </div>
                             <p id="numero-seleccionado-texto" class="text-center font-black text-deepBlue mt-3 hidden">
                                 Has seleccionado: <span id="numero-seleccionado-valor" class="gold-text text-2xl"></span>
                             </p>
                         </div>
 
-                        <!-- Redes sociales -->
                         <div class="mt-8 p-5 bg-skyBlue/40 rounded-2xl text-center">
                             <p class="font-black text-deepBlue mb-3">
                                 <i class="fas fa-heart gold-text mr-1"></i> ¡SÍGUENOS para participar!
@@ -787,7 +698,6 @@
                         </button>
                     </div>
 
-                    <!-- Ticket de participante -->
                     <div id="ticket-participante" class="hidden">
                         <div class="ticket-box mb-6">
                             <p class="text-sm uppercase tracking-widest mb-2">¡Estás participando!</p>
@@ -807,7 +717,6 @@
                         </div>
                     </div>
 
-                    <!-- Mensaje de error -->
                     <p id="sorteo-error" class="text-red-500 text-sm mt-4 hidden text-center font-bold">
                         <i class="fas fa-exclamation-circle mr-1"></i> <span id="sorteo-error-text"></span>
                     </p>
@@ -815,17 +724,20 @@
 
                 <!-- Panel de información -->
                 <div class="space-y-6" data-aos="fade-left">
-                    <!-- Lista de números ocupados -->
                     <div class="glass-card p-8 rounded-[3rem] shadow-2xl">
-                        <h3 class="text-2xl font-black text-deepBlue mb-6">
-                            <i class="fas fa-list-ol gold-text mr-2"></i>Números Ocupados
-                        </h3>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-black text-deepBlue">
+                                <i class="fas fa-list-ol gold-text mr-2"></i>Números Ocupados
+                            </h3>
+                            <span class="live-indicator" style="font-size: 0.6rem;">
+                                <span class="live-dot"></span> LIVE
+                            </span>
+                        </div>
                         <div id="lista-ocupados" class="space-y-2 max-h-60 overflow-y-auto">
                             <p class="text-gray-400 text-center py-6 italic">Aún no hay números ocupados. ¡Sé el primero!</p>
                         </div>
                     </div>
 
-                    <!-- Panel Admin (solo visible si está logueado) -->
                     <div class="glass-card p-8 rounded-[3rem] shadow-2xl">
                         <h3 class="text-2xl font-black text-deepBlue mb-6">
                             <i class="fas fa-shield-alt gold-text mr-2"></i>Administrador
@@ -836,11 +748,15 @@
                         </button>
                     </div>
 
-                    <!-- Estadísticas -->
                     <div class="glass-card p-8 rounded-[3rem] shadow-2xl">
-                        <h3 class="text-2xl font-black text-deepBlue mb-6">
-                            <i class="fas fa-chart-bar gold-text mr-2"></i>Estadísticas
-                        </h3>
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-2xl font-black text-deepBlue">
+                                <i class="fas fa-chart-bar gold-text mr-2"></i>Estadísticas
+                            </h3>
+                            <span class="live-indicator" style="font-size: 0.6rem;">
+                                <span class="live-dot"></span> LIVE
+                            </span>
+                        </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="text-center p-4 bg-skyBlue/50 rounded-2xl">
                                 <p class="text-3xl font-black text-deepBlue" id="stat-participantes">0</p>
@@ -850,6 +766,12 @@
                                 <p class="text-3xl font-black text-green-600" id="stat-libres">500</p>
                                 <p class="text-xs font-bold text-gray-500 uppercase">Números Libres</p>
                             </div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p class="text-xs text-gray-400">
+                                <i class="fas fa-sync-alt mr-1" id="sync-icon"></i>
+                                Sincronización automática cada 10 segundos
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -866,7 +788,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <!-- Doctor 1 -->
                 <div class="glass-card p-8 rounded-[3rem] shadow-xl border-t-8 gold-border flex flex-col md:flex-row gap-6 items-center" data-aos="fade-up">
                     <img src="javi.png" alt="Doctor 1" class="w-40 h-40 rounded-3xl object-cover shadow-2xl border-4 border-white">
                     <div>
@@ -876,7 +797,6 @@
                     </div>
                 </div>
 
-                <!-- Doctor 2 -->
                 <div class="glass-card p-8 rounded-[3rem] shadow-xl border-t-8 gold-border flex flex-col md:flex-row gap-6 items-center" data-aos="fade-up" data-aos-delay="200">
                     <img src="lore.png" alt="Doctor 2" class="w-40 h-40 rounded-3xl object-cover shadow-2xl border-4 border-white">
                     <div>
@@ -977,13 +897,31 @@
     <script>
         AOS.init({ duration: 1000, once: true });
 
-        // ===== MENÚ MÓVIL =====
+        // ==================================================================
+        // ============ CONFIGURACIÓN DE SINCRONIZACIÓN EN LA NUBE ==========
+        // ==================================================================
+        // 📌 INSTRUCCIONES:
+        // 1. Ve a https://jsonbin.io y crea una cuenta GRATIS
+        // 2. Crea un Bin nuevo con este contenido:
+        //    {"fecha":"Por definir","premio":"Limpieza Dental GRATIS","participantes":[],"ganadores":[],"numerosOcupados":[]}
+        // 3. Copia el BIN ID y pégalo abajo en JSONBIN_ID
+        // 4. Ve a API Keys, copia tu Master Key y pégala en JSONBIN_KEY
+        // 5. ¡Listo! Todos verán los datos en tiempo real.
+        // ==================================================================
+        const JSONBIN_ID = 'TU_BIN_ID_AQUI';   // ← Pega aquí tu Bin ID de jsonbin.io
+        const JSONBIN_KEY = 'TU_API_KEY_AQUI'; // ← Pega aquí tu Master Key de jsonbin.io
+        const SYNC_INTERVAL = 10000;           // Sincronización cada 10 segundos
+
+        // Si NO has configurado jsonbin.io, se usa localStorage como fallback
+        const USAR_NUBE = JSONBIN_ID !== 'TU_BIN_ID_AQUI' && JSONBIN_KEY !== 'TU_API_KEY_AQUI';
+
+        // ==================================================================
+
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
         }
 
-        // ===== CHAT TOGGLE =====
         function toggleChat() {
             const chat = document.getElementById('chat-window');
             chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
@@ -992,7 +930,6 @@
             }
         }
 
-        // ===== ENVIAR MENSAJE DEL USUARIO =====
         function sendUserMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
@@ -1019,7 +956,6 @@
             content.scrollTop = content.scrollHeight;
         }
 
-        // ===== RESPUESTA INTELIGENTE =====
         function getAIResponse(text) {
             const lower = text.toLowerCase();
             if (lower.includes('servicio') || lower.includes('ofrecen')) {
@@ -1027,13 +963,13 @@
             } else if (lower.includes('cita') || lower.includes('consulta') || lower.includes('gratis')) {
                 return '¡Claro! Nuestra primera evaluación es completamente GRATUITA. Solo toca el botón de WhatsApp y agenda tu cita. ¡Te esperamos!';
             } else if (lower.includes('ubicación') || lower.includes('donde') || lower.includes('dirección')) {
-                return 'Estamos en el centro de Los Teques, Estado Miranda. Enfrente de la plaza Bolívar. ¡Un lugar de paz para tu salud dental!';
+                return 'Estamos en Los Teques, Urbanización El Barbecho, Plaza Raúl Leoni, Edificio 3 bloque 2 planta baja. ¡Un lugar de paz para tu salud dental!';
             } else if (lower.includes('horario') || lower.includes('abren') || lower.includes('atencion')) {
                 return 'Atención de Lunes a Viernes, 7:30 AM a 4:30 PM. Los sábados solo con cita previa.';
             } else if (lower.includes('doctor') || lower.includes('odontólogo') || lower.includes('especialista')) {
                 return 'Contamos con el Dr. Javier Parra (Especialista) y la Dra. Lorena Llerena (Odontólogo General). Ambos con amplia experiencia y vocación de servicio.';
             } else if (lower.includes('videollamada') || lower.includes('express')) {
-                return '¡Sí! Ofrecemos Citas Express por videollamada. Toca el botón verde "Cita Express" que está en la pantalla para agendar la tuya.';
+                return '¡Sí! Ofrecemos Citas Express por videollamada. Puedes agendar desde la sección de contacto o desde el botón del Hero.';
             } else if (lower.includes('sorteo') || lower.includes('promoción') || lower.includes('regalo') || lower.includes('ganar')) {
                 return '¡Tenemos un sorteo activo! Puedes ganar una Limpieza Dental GRATIS. Ve a la sección de Promociones, regístrate y elige tu número de la suerte. ¡Mucha suerte! 🍀';
             } else if (lower.includes('gracias')) {
@@ -1043,7 +979,6 @@
             }
         }
 
-        // ===== BOTONES RÁPIDOS =====
         function botReply(topic) {
             const content = document.getElementById('chat-content');
             let reply = '';
@@ -1056,7 +991,7 @@
                     reply = '¡Bendiciones! La primera evaluación es GRATUITA. Solo toca el botón de WhatsApp y agenda tu cita. ¡Estamos para servirte!';
                     break;
                 case 'ubicacion':
-                    reply = 'Los Teques Urbanización: El Barbecho Plaza Raul Leoni ¡Te esperamos con alegría!';
+                    reply = 'Los Teques, Urbanización El Barbecho, Plaza Raúl Leoni, Edificio 3 bloque 2 planta baja. ¡Te esperamos con alegría!';
                     break;
                 default:
                     reply = '¿En qué más puedo ayudarte?';
@@ -1069,14 +1004,12 @@
             content.scrollTop = content.scrollHeight;
         }
 
-        // ===== ENTER PARA ENVIAR =====
         document.getElementById('chat-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 sendUserMessage();
             }
         });
 
-        // ===== VIDEOLLAMADA MODAL =====
         function openVideocall() {
             document.getElementById('videocall-modal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1095,7 +1028,7 @@
         // ==================== LÓGICA DEL SORTEO ===========================
         // ==================================================================
 
-        const ADMIN_PASSWORD = 'CMOS2026admin'; // ← CAMBIA ESTA CONTRASEÑA
+        const ADMIN_PASSWORD = 'CMOS2026admin';
 
         let sorteoData = {
             fecha: 'Por definir',
@@ -1106,86 +1039,165 @@
         };
 
         let numeroSeleccionado = null;
+        let syncTimer = null;
+        let ultimaVersion = null;
 
-        // ===== CARGAR DATOS =====
-        function cargarSorteo() {
+        // ===== CARGAR DATOS (NUBE o LOCAL) =====
+        async function cargarSorteo() {
+            if (USAR_NUBE) {
+                try {
+                    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+                        headers: { 'X-Master-Key': JSONBIN_KEY }
+                    });
+                    if (res.ok) {
+                        const json = await res.json();
+                        if (json.record) {
+                            sorteoData = { ...sorteoData, ...json.record };
+                            ultimaVersion = JSON.stringify(json.record);
+                        }
+                    }
+                } catch(e) {
+                    console.warn('Error cargando de la nube, usando local:', e);
+                    cargarLocal();
+                }
+            } else {
+                cargarLocal();
+            }
+            actualizarInterfazSorteo();
+            actualizarTimestamp();
+        }
+
+        function cargarLocal() {
             const guardado = localStorage.getItem('cmos_sorteo');
             if (guardado) {
                 try {
                     sorteoData = JSON.parse(guardado);
                 } catch(e) {
-                    console.error('Error cargando sorteo:', e);
+                    console.error('Error cargando sorteo local:', e);
                 }
             }
-            actualizarInterfazSorteo();
         }
 
-        // ===== GUARDAR DATOS =====
-        function guardarSorteo() {
+        // ===== GUARDAR DATOS (NUBE o LOCAL) =====
+        async function guardarSorteo(silencioso = false) {
+            // Siempre guardamos local como respaldo
             localStorage.setItem('cmos_sorteo', JSON.stringify(sorteoData));
+
+            if (USAR_NUBE) {
+                try {
+                    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': JSONBIN_KEY
+                        },
+                        body: JSON.stringify(sorteoData)
+                    });
+                    ultimaVersion = JSON.stringify(sorteoData);
+                } catch(e) {
+                    console.warn('Error guardando en la nube:', e);
+                    if (!silencioso) alert('⚠️ No se pudo sincronizar con la nube. Los datos se guardaron localmente.');
+                }
+            }
+
             actualizarInterfazSorteo();
+            actualizarTimestamp();
+        }
+
+        // ===== SINCRONIZACIÓN AUTOMÁTICA (PULL) =====
+        async function sincronizarDesdeNube() {
+            if (!USAR_NUBE) return;
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': JSONBIN_KEY }
+                });
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.record) {
+                        const nuevaVersion = JSON.stringify(json.record);
+                        if (nuevaVersion !== ultimaVersion) {
+                            ultimaVersion = nuevaVersion;
+                            sorteoData = { ...sorteoData, ...json.record };
+                            localStorage.setItem('cmos_sorteo', JSON.stringify(sorteoData));
+                            actualizarInterfazSorteo();
+                            actualizarTimestamp();
+                        }
+                    }
+                }
+            } catch(e) {
+                console.warn('Error en sincronización:', e);
+            }
+        }
+
+        // ===== ACTUALIZAR TIMESTAMP =====
+        function actualizarTimestamp() {
+            const el = document.getElementById('ultima-actualizacion');
+            if (el) {
+                const ahora = new Date();
+                el.textContent = `Actualizado: ${ahora.toLocaleTimeString('es-VE')}`;
+            }
+            const icon = document.getElementById('sync-icon');
+            if (icon) {
+                icon.style.animation = 'none';
+                setTimeout(() => { icon.style.animation = 'spin 1s ease'; }, 10);
+            }
         }
 
         // ===== ACTUALIZAR INTERFAZ =====
         function actualizarInterfazSorteo() {
-            // Fecha
-            document.getElementById('fecha-sorteo-texto').textContent = 'Resultados: ' + sorteoData.fecha;
+            const fechaEl = document.getElementById('fecha-sorteo-texto');
+            if (fechaEl) fechaEl.textContent = 'Resultados: ' + sorteoData.fecha;
 
-            // Grid de números
             renderizarGridNumeros();
-
-            // Lista de ocupados
             renderizarListaOcupados();
 
-            // Estadísticas
-            document.getElementById('stat-participantes').textContent = sorteoData.participantes.length;
-            document.getElementById('stat-libres').textContent = 500 - sorteoData.numerosOcupados.length;
-            document.getElementById('contador-libres').textContent = 500 - sorteoData.numerosOcupados.length;
+            const statPart = document.getElementById('stat-participantes');
+            const statLib = document.getElementById('stat-libres');
+            const contLib = document.getElementById('contador-libres');
 
-            // Admin
+            if (statPart) statPart.textContent = sorteoData.participantes.length;
+            if (statLib) statLib.textContent = 500 - sorteoData.numerosOcupados.length;
+            if (contLib) contLib.textContent = 500 - sorteoData.numerosOcupados.length;
+
             renderizarAdminParticipantes();
-            if (sorteoData.ganadores.length > 0) {
-                mostrarGanadorAdmin(sorteoData.ganadores[sorteoData.ganadores.length - 1]);
-            } else {
-                document.getElementById('admin-ganador-box').classList.add('hidden');
+            const ganBox = document.getElementById('admin-ganador-box');
+            if (ganBox) {
+                if (sorteoData.ganadores.length > 0) {
+                    mostrarGanadorAdmin(sorteoData.ganadores[sorteoData.ganadores.length - 1]);
+                } else {
+                    ganBox.classList.add('hidden');
+                }
             }
         }
 
-        // ===== RENDERIZAR GRID DE NÚMEROS =====
         function renderizarGridNumeros() {
             const grid = document.getElementById('grid-numeros');
+            if (!grid) return;
             let html = '';
             for (let i = 1; i <= 500; i++) {
                 const ocupado = sorteoData.numerosOcupados.includes(i);
                 const seleccionado = numeroSeleccionado === i;
                 let clase = 'numero-btn ';
-                if (seleccionado) {
-                    clase += 'seleccionado';
-                } else if (ocupado) {
-                    clase += 'ocupado';
-                } else {
-                    clase += 'libre';
-                }
+                if (seleccionado) clase += 'seleccionado';
+                else if (ocupado) clase += 'ocupado';
+                else clase += 'libre';
                 html += `<button class="${clase}" data-numero="${i}" ${ocupado && !seleccionado ? 'disabled' : ''} onclick="seleccionarNumero(${i})">${i}</button>`;
             }
             grid.innerHTML = html;
         }
 
-        // ===== SELECCIONAR NÚMERO =====
         function seleccionarNumero(num) {
             if (sorteoData.numerosOcupados.includes(num)) return;
-
             numeroSeleccionado = num;
-            document.getElementById('numero-seleccionado-texto').classList.remove('hidden');
-            document.getElementById('numero-seleccionado-valor').textContent = num;
+            const txt = document.getElementById('numero-seleccionado-texto');
+            const val = document.getElementById('numero-seleccionado-valor');
+            if (txt) txt.classList.remove('hidden');
+            if (val) val.textContent = num;
             renderizarGridNumeros();
-
-            // Scroll suave al número seleccionado
             const btn = document.querySelector(`.numero-btn[data-numero="${num}"]`);
             if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        // ===== TOGGLE CUADRO NÚMEROS =====
         function toggleNumeros() {
             const cuadro = document.getElementById('cuadro-numeros');
             cuadro.classList.toggle('hidden');
@@ -1197,14 +1209,12 @@
             }
         }
 
-        // ===== PARTICIPAR =====
-        function participarSorteo() {
+        async function participarSorteo() {
             const nombre = document.getElementById('sorteo-nombre').value.trim();
             const usuario = document.getElementById('sorteo-usuario').value.trim();
             const errorEl = document.getElementById('sorteo-error');
             const errorText = document.getElementById('sorteo-error-text');
 
-            // Validaciones
             if (!nombre) {
                 errorText.textContent = 'Por favor ingresa tu nombre y apellido.';
                 errorEl.classList.remove('hidden');
@@ -1220,15 +1230,23 @@
                 errorEl.classList.remove('hidden');
                 return;
             }
+
+            // 🔄 Refrescar datos antes de validar (para evitar conflictos entre usuarios)
+            if (USAR_NUBE) {
+                await sincronizarDesdeNube();
+            }
+
             if (sorteoData.numerosOcupados.includes(numeroSeleccionado)) {
-                errorText.textContent = 'Ese número ya fue ocupado. Elige otro.';
+                errorText.textContent = 'Ese número acaba de ser ocupado por otra persona. Elige otro.';
                 errorEl.classList.remove('hidden');
+                renderizarGridNumeros();
+                numeroSeleccionado = null;
+                document.getElementById('numero-seleccionado-texto').classList.add('hidden');
                 return;
             }
 
             errorEl.classList.add('hidden');
 
-            // Registrar participante
             const participante = {
                 nombre: nombre,
                 usuario: usuario,
@@ -1239,26 +1257,22 @@
             sorteoData.participantes.push(participante);
             sorteoData.numerosOcupados.push(numeroSeleccionado);
 
-            guardarSorteo();
+            await guardarSorteo();
 
-            // Mostrar ticket
             document.getElementById('formulario-sorteo').classList.add('hidden');
             document.getElementById('ticket-participante').classList.remove('hidden');
             document.getElementById('ticket-nombre').textContent = nombre;
             document.getElementById('ticket-numero').textContent = numeroSeleccionado;
             document.getElementById('ticket-usuario').textContent = usuario;
 
-            // WhatsApp compartir
             const msg = `¡Hola! Estoy participando en el sorteo de CMOS Shalom 🦷✨%0A%0A👤 Nombre: ${nombre}%0A📱 Usuario: ${usuario}%0A🎟️ Número de la suerte: ${numeroSeleccionado}%0A%0A¡Deseo ganar una Limpieza Dental GRATIS! 🍀`;
             document.getElementById('btn-compartir-whatsapp').href = `https://wa.me/?text=${msg}`;
 
-            // Reset número seleccionado
             numeroSeleccionado = null;
             document.getElementById('numero-seleccionado-texto').classList.add('hidden');
             renderizarGridNumeros();
         }
 
-        // ===== NUEVO PARTICIPANTE =====
         function nuevoParticipante() {
             document.getElementById('sorteo-nombre').value = '';
             document.getElementById('sorteo-usuario').value = '';
@@ -1272,14 +1286,13 @@
             renderizarGridNumeros();
         }
 
-        // ===== RENDERIZAR LISTA OCUPADOS =====
         function renderizarListaOcupados() {
             const lista = document.getElementById('lista-ocupados');
+            if (!lista) return;
             if (sorteoData.participantes.length === 0) {
                 lista.innerHTML = '<p class="text-gray-400 text-center py-6 italic">Aún no hay números ocupados. ¡Sé el primero!</p>';
                 return;
             }
-            // Ordenar por número
             const ordenados = [...sorteoData.participantes].sort((a, b) => a.numero - b.numero);
             lista.innerHTML = ordenados.map(p => `
                 <div class="participante-row">
@@ -1323,7 +1336,6 @@
                 document.getElementById('admin-login-view').classList.add('hidden');
                 document.getElementById('admin-panel-view').classList.remove('hidden');
                 document.getElementById('admin-error').classList.add('hidden');
-                // Cargar fecha y premio actuales
                 document.getElementById('admin-fecha-sorteo').value = sorteoData.fecha;
                 document.getElementById('admin-premio').value = sorteoData.premio;
                 renderizarAdminParticipantes();
@@ -1335,26 +1347,18 @@
             }
         }
 
-        // ===== CREAR SORTEO =====
-        function crearSorteo() {
+        async function crearSorteo() {
             const fecha = document.getElementById('admin-fecha-sorteo').value.trim();
             const premio = document.getElementById('admin-premio').value.trim();
-            if (!fecha) {
-                alert('Por favor ingresa una fecha para el sorteo.');
-                return;
-            }
-            if (!premio) {
-                alert('Por favor ingresa el premio del sorteo.');
-                return;
-            }
+            if (!fecha) { alert('Por favor ingresa una fecha para el sorteo.'); return; }
+            if (!premio) { alert('Por favor ingresa el premio del sorteo.'); return; }
             sorteoData.fecha = fecha;
             sorteoData.premio = premio;
-            guardarSorteo();
+            await guardarSorteo();
             alert('✅ Sorteo configurado correctamente.');
         }
 
-        // ===== REINICIAR SORTEO =====
-        function reiniciarSorteo() {
+        async function reiniciarSorteo() {
             if (!confirm('⚠️ ¿Estás seguro de reiniciar el sorteo? Se eliminarán TODOS los participantes, números y ganadores.')) return;
             if (!confirm('⚠️ ÚLTIMA ADVERTENCIA: Esta acción no se puede deshacer. ¿Continuar?')) return;
 
@@ -1362,9 +1366,8 @@
             sorteoData.numerosOcupados = [];
             sorteoData.ganadores = [];
             numeroSeleccionado = null;
-            guardarSorteo();
+            await guardarSorteo();
 
-            // Reset UI
             document.getElementById('admin-ganador-box').classList.add('hidden');
             document.getElementById('formulario-sorteo').classList.remove('hidden');
             document.getElementById('ticket-participante').classList.add('hidden');
@@ -1383,9 +1386,10 @@
             alert('✅ Sorteo reiniciado correctamente. ¡Todo listo para comenzar de nuevo!');
         }
 
-        // ===== SORTEAR GANADOR =====
-        function sortearGanador() {
-            // Participantes que no han ganado aún
+        async function sortearGanador() {
+            // Refrescar antes de sortear para tener lo último
+            if (USAR_NUBE) await sincronizarDesdeNube();
+
             const elegibles = sorteoData.participantes.filter(p =>
                 !sorteoData.ganadores.some(g => g.numero === p.numero)
             );
@@ -1395,20 +1399,16 @@
                 return;
             }
 
-            // Selección aleatoria real
             const indice = Math.floor(Math.random() * elegibles.length);
             const ganador = elegibles[indice];
 
-            // Agregar a ganadores
             sorteoData.ganadores.push(ganador);
-            guardarSorteo();
+            await guardarSorteo();
 
-            // Mostrar animación de sorteo
             mostrarAnimacionSorteo(ganador);
         }
 
         function mostrarAnimacionSorteo(ganador) {
-            // Crear overlay de animación
             const overlay = document.createElement('div');
             overlay.style.cssText = `
                 position: fixed; inset: 0; background: rgba(10, 47, 108, 0.95);
@@ -1425,17 +1425,14 @@
             `;
             document.body.appendChild(overlay);
 
-            let contador = 0;
             const intervalo = setInterval(() => {
-                const random = elegibles => elegibles[Math.floor(Math.random() * elegibles.length)];
-                const temp = random(sorteoData.participantes);
+                const temp = sorteoData.participantes[Math.floor(Math.random() * sorteoData.participantes.length)];
                 const numEl = overlay.querySelector('p');
                 if (numEl) {
                     numEl.textContent = `Número: ${temp ? temp.numero : '...'}`;
                     numEl.style.fontSize = '3rem';
                     numEl.style.color = '#F0D060';
                 }
-                contador++;
             }, 100);
 
             setTimeout(() => {
@@ -1458,7 +1455,6 @@
             }, 3000);
         }
 
-        // ===== MOSTRAR GANADOR EN ADMIN =====
         function mostrarGanadorAdmin(ganador) {
             if (!ganador) return;
             document.getElementById('admin-ganador-box').classList.remove('hidden');
@@ -1467,11 +1463,9 @@
             document.getElementById('admin-ganador-red').textContent = ganador.usuario;
         }
 
-        // ===== RENDERIZAR PARTICIPANTES EN ADMIN =====
         function renderizarAdminParticipantes() {
             const lista = document.getElementById('admin-participantes-list');
             const total = document.getElementById('admin-total');
-
             if (!lista || !total) return;
 
             total.textContent = sorteoData.participantes.length;
@@ -1487,7 +1481,7 @@
                 return `
                     <div class="participante-row ${esGanador ? 'ganador-row' : ''}">
                         <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 rounded-xl ${esGanador ? 'gold-gradient' : 'bg-skyBlue'} flex items-center justify-center font-black ${esGanador ? 'text-deepBlue' : 'text-deepBlue'} text-sm">
+                            <span class="w-10 h-10 rounded-xl ${esGanador ? 'gold-gradient' : 'bg-skyBlue'} flex items-center justify-center font-black text-deepBlue text-sm">
                                 ${esGanador ? '<i class="fas fa-crown"></i>' : p.numero}
                             </span>
                             <div>
@@ -1504,19 +1498,16 @@
             }).join('');
         }
 
-        // ===== EXPORTAR PARTICIPANTES =====
         function exportarParticipantes() {
             if (sorteoData.participantes.length === 0) {
                 alert('No hay participantes para exportar.');
                 return;
             }
-
             let csv = 'Nombre,Usuario,Numero,Fecha,EsGanador\n';
             sorteoData.participantes.forEach(p => {
                 const esGanador = sorteoData.ganadores.some(g => g.numero === p.numero);
                 csv += `"${p.nombre}","${p.usuario}",${p.numero},"${p.fecha}",${esGanador ? 'Sí' : 'No'}\n`;
             });
-
             const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -1525,15 +1516,21 @@
         }
 
         // ===== INICIALIZAR =====
-        document.addEventListener('DOMContentLoaded', function() {
-            cargarSorteo();
+        document.addEventListener('DOMContentLoaded', async function() {
+            await cargarSorteo();
 
-            // Enter en contraseña admin
+            // Iniciar sincronización automática
+            if (USAR_NUBE) {
+                syncTimer = setInterval(sincronizarDesdeNube, SYNC_INTERVAL);
+                console.log('✅ Sincronización en la nube activada (cada ' + SYNC_INTERVAL/1000 + 's)');
+            } else {
+                console.log('ℹ️ Modo LOCAL activado. Configura JSONBIN_ID y JSONBIN_KEY para sincronización en tiempo real.');
+            }
+
             document.getElementById('admin-password').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') loginAdmin();
             });
 
-            // Cerrar sesión admin al cerrar modal
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
                     if (!document.getElementById('admin-modal').classList.contains('active')) {
@@ -1545,13 +1542,19 @@
             observer.observe(document.getElementById('admin-modal'), { attributes: true });
         });
 
-        // ===== TECLA ESC PARA CERRAR MODALES =====
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeVideocall();
                 closeAdmin();
             }
         });
+
+        // Animación del icono de sync
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
