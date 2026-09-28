@@ -172,6 +172,18 @@
             transform: scale(1.15);
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
         }
+        .numero-btn.bloqueado-temporal {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #f59e0b;
+            cursor: wait;
+            opacity: 0.6;
+            animation: pulse-reserva 1.5s infinite;
+        }
+        @keyframes pulse-reserva {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
 
         #admin-modal {
             display: none;
@@ -269,7 +281,6 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
 
-        /* ===== INDICADOR LIVE ===== */
         .live-indicator {
             display: inline-flex;
             align-items: center;
@@ -294,6 +305,21 @@
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.4; transform: scale(0.7); }
         }
+
+        /* Estado de conexión */
+        .conexion-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        .conexion-online { background: #16a34a; color: white; }
+        .conexion-offline { background: #dc2626; color: white; }
+        .conexion-connecting { background: #f59e0b; color: white; }
 
         html { scroll-behavior: smooth; }
 
@@ -323,8 +349,6 @@
         <span class="hidden md:inline">Agendar Consulta Gratis</span>
         <span class="md:hidden"><i class="fas fa-chevron-right"></i></span>
     </a>
-
-    <!-- ⚠️ EL BOTÓN FLOTANTE VERDE DE VIDEOLLAMADA FUE ELIMINADO AQUÍ -->
 
     <!-- ==================== MODAL VIDEOLLAMADA ==================== -->
     <div id="videocall-modal">
@@ -623,12 +647,16 @@
                         <i class="fas fa-calendar-alt gold-text mr-2"></i>
                         <span id="fecha-sorteo-texto">Resultados: Por definir</span>
                     </div>
-                    <div class="live-indicator" id="live-indicator">
+                    <div class="live-indicator">
                         <span class="live-dot"></span>
                         <span>EN VIVO</span>
                     </div>
+                    <div id="conexion-status" class="conexion-status conexion-connecting">
+                        <i class="fas fa-circle" style="font-size: 6px;"></i>
+                        <span id="conexion-texto">Conectando...</span>
+                    </div>
                 </div>
-                <p class="text-xs text-gray-400 mt-2" id="ultima-actualizacion">Actualizado: hace un momento</p>
+                <p class="text-xs text-gray-400 mt-2" id="ultima-actualizacion">Sincronizado en tiempo real con Firebase</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
@@ -662,7 +690,10 @@
                         <div id="cuadro-numeros" class="hidden mt-6">
                             <div class="flex justify-between items-center mb-3">
                                 <span class="text-sm font-bold text-deepBlue">Números libres (<span id="contador-libres">500</span>)</span>
-                                <span class="text-xs text-gray-400"><span class="text-red-500">●</span> Ocupado</span>
+                                <div class="flex gap-3 text-xs">
+                                    <span class="text-gray-400"><span class="text-red-500">●</span> Ocupado</span>
+                                    <span class="text-gray-400"><span class="text-yellow-500">●</span> Reservando</span>
+                                </div>
                             </div>
                             <div id="grid-numeros" class="numero-grid max-h-80 overflow-y-auto p-2 bg-white/50 rounded-2xl">
                             </div>
@@ -769,8 +800,8 @@
                         </div>
                         <div class="mt-4 text-center">
                             <p class="text-xs text-gray-400">
-                                <i class="fas fa-sync-alt mr-1" id="sync-icon"></i>
-                                Sincronización automática cada 10 segundos
+                                <i class="fas fa-bolt text-yellow-500 mr-1"></i>
+                                Firebase Realtime — Actualización instantánea
                             </p>
                         </div>
                     </div>
@@ -892,36 +923,735 @@
         </div>
     </footer>
 
-    <!-- ==================== SCRIPTS ==================== -->
+    <!-- ==================== FIREBASE SDK ==================== -->
+    <script type="module">
+        // Importar Firebase desde CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set, update, get, runTransaction }
+            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        // ==================================================================
+        // 🔥 CONFIGURACIÓN DE FIREBASE
+        // ==================================================================
+        // ⚠️ REEMPLAZA ESTOS VALORES CON LOS TUYOS (ver instrucciones arriba)
+        // ==================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq9S0ebTrF2Mp8q2Sc_-U0zrYCVPjYTAU",
+            authDomain: "cmos-shalom.firebaseapp.com",
+            databaseURL: "https://cmos-shalom-default-rtdb.firebaseio.com",
+            projectId: "cmos-shalom",
+            storageBucket: "cmos-shalom.firebasestorage.app",
+             messagingSenderId: "25822361178",
+             appId: "1:25822361178:web:cb221ce75d02bb08450a63"
+        };
+
+        // Inicializar Firebase
+        let app, db;
+        let firebaseListo = false;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+            firebaseListo = true;
+            console.log('✅ Firebase inicializado correctamente');
+        } catch(e) {
+            console.error('❌ Error inicializando Firebase:', e);
+            console.warn('⚠️ Trabajando en modo LOCAL (localStorage)');
+        }
+
+        // Exponer al scope global
+        window.firebaseDB = db;
+        window.firebaseRef = ref;
+        window.firebaseOnValue = onValue;
+        window.firebaseSet = set;
+        window.firebaseUpdate = update;
+        window.firebaseGet = get;
+        window.firebaseRunTransaction = runTransaction;
+        window.firebaseListo = firebaseListo;
+
+        // Disparar evento para que el código principal se entere
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
+
+    <!-- ==================== SCRIPT PRINCIPAL ==================== -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 1000, once: true });
 
         // ==================================================================
-        // ============ CONFIGURACIÓN DE SINCRONIZACIÓN EN LA NUBE ==========
+        // ==================== ESTADO GLOBAL ================================
         // ==================================================================
-        // 📌 INSTRUCCIONES:
-        // 1. Ve a https://jsonbin.io y crea una cuenta GRATIS
-        // 2. Crea un Bin nuevo con este contenido:
-        //    {"fecha":"Por definir","premio":"Limpieza Dental GRATIS","participantes":[],"ganadores":[],"numerosOcupados":[]}
-        // 3. Copia el BIN ID y pégalo abajo en JSONBIN_ID
-        // 4. Ve a API Keys, copia tu Master Key y pégala en JSONBIN_KEY
-        // 5. ¡Listo! Todos verán los datos en tiempo real.
+        let sorteoData = {
+            fecha: 'Por definir',
+            premio: 'Limpieza Dental GRATIS',
+            participantes: {},   // { "id": {nombre, usuario, numero, fecha} }
+            ganadores: {},       // { "id": {...} }
+            numerosOcupados: {}  // { "42": true, "77": true }
+        };
+
+        let numeroSeleccionado = null;
+        let numerosReservadosTemp = {}; // reservas temporales locales
+        let firebaseActivo = false;
+        let unsubscribeSorteo = null;
+
+        const ADMIN_PASSWORD = 'CMOS2026admin';
+
         // ==================================================================
-        const JSONBIN_ID = 'TU_BIN_ID_AQUI';   // ← Pega aquí tu Bin ID de jsonbin.io
-        const JSONBIN_KEY = 'TU_API_KEY_AQUI'; // ← Pega aquí tu Master Key de jsonbin.io
-        const SYNC_INTERVAL = 10000;           // Sincronización cada 10 segundos
+        // ==================== UTILIDADES ==================================
+        // ==================================================================
+        function generarID() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+        }
 
-        // Si NO has configurado jsonbin.io, se usa localStorage como fallback
-        const USAR_NUBE = JSONBIN_ID !== 'TU_BIN_ID_AQUI' && JSONBIN_KEY !== 'TU_API_KEY_AQUI';
+        function actualizarConexion(estado) {
+            const el = document.getElementById('conexion-status');
+            const txt = document.getElementById('conexion-texto');
+            if (!el || !txt) return;
+            el.className = 'conexion-status ';
+            if (estado === 'online') {
+                el.className += 'conexion-online';
+                txt.textContent = 'Conectado';
+            } else if (estado === 'offline') {
+                el.className += 'conexion-offline';
+                txt.textContent = 'Sin conexión';
+            } else {
+                el.className += 'conexion-connecting';
+                txt.textContent = 'Conectando...';
+            }
+        }
 
         // ==================================================================
+        // ==================== INICIALIZAR FIREBASE ========================
+        // ==================================================================
+        function inicializarFirebase() {
+            if (window.firebaseListo && window.firebaseDB) {
+                firebaseActivo = true;
+                console.log('🔥 Modo Firebase activado — tiempo real');
+                actualizarConexion('online');
+                escucharCambiosFirebase();
+            } else {
+                console.warn('⚠️ Firebase no está configurado. Usando localStorage.');
+                firebaseActivo = false;
+                actualizarConexion('offline');
+                cargarLocal();
+                actualizarInterfazSorteo();
+            }
+        }
 
+        // ==================================================================
+        // ==================== ESCUCHAR CAMBIOS EN TIEMPO REAL =============
+        // ==================================================================
+        function escucharCambiosFirebase() {
+            const db = window.firebaseDB;
+            const ref = window.firebaseRef;
+
+            // Escuchar el nodo raíz del sorteo
+            const sorteoRef = ref(db, 'sorteo');
+
+            unsubscribeSorteo = window.firebaseOnValue(sorteoRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    // Convertir a estructura interna
+                    sorteoData.fecha = data.fecha || 'Por definir';
+                    sorteoData.premio = data.premio || 'Limpieza Dental GRATIS';
+                    sorteoData.participantes = data.participantes || {};
+                    sorteoData.ganadores = data.ganadores || {};
+                    sorteoData.numerosOcupados = data.numerosOcupados || {};
+                } else {
+                    // Nodo vacío: crear estructura inicial
+                    const inicial = {
+                        fecha: 'Por definir',
+                        premio: 'Limpieza Dental GRATIS',
+                        participantes: {},
+                        ganadores: {},
+                        numerosOcupados: {}
+                    };
+                    window.firebaseSet(sorteoRef, inicial);
+                    sorteoData = { ...inicial };
+                }
+
+                // Refrescar UI automáticamente
+                actualizarInterfazSorteo();
+                actualizarTimestamp();
+                actualizarConexion('online');
+                console.log('🔄 Datos actualizados desde Firebase');
+            }, (error) => {
+                console.error('Error en listener:', error);
+                actualizarConexion('offline');
+                cargarLocal();
+                actualizarInterfazSorteo();
+            });
+        }
+
+        // ==================================================================
+        // ==================== GUARDAR (Firebase o Local) ==================
+        // ==================================================================
+        async function guardarSorteo() {
+            // Guardar local siempre como respaldo
+            localStorage.setItem('cmos_sorteo', JSON.stringify(sorteoData));
+
+            if (firebaseActivo) {
+                try {
+                    const db = window.firebaseDB;
+                    const ref = window.firebaseRef;
+                    const sorteoRef = ref(db, 'sorteo');
+                    await window.firebaseSet(sorteoRef, sorteoData);
+                    console.log('✅ Datos guardados en Firebase');
+                } catch(e) {
+                    console.error('❌ Error guardando en Firebase:', e);
+                    actualizarConexion('offline');
+                }
+            }
+
+            actualizarInterfazSorteo();
+            actualizarTimestamp();
+        }
+
+        function cargarLocal() {
+            const guardado = localStorage.getItem('cmos_sorteo');
+            if (guardado) {
+                try {
+                    sorteoData = JSON.parse(guardado);
+                } catch(e) {
+                    console.error('Error cargando sorteo local:', e);
+                }
+            }
+        }
+
+        function actualizarTimestamp() {
+            const el = document.getElementById('ultima-actualizacion');
+            if (el) {
+                const ahora = new Date();
+                el.textContent = `Última sincronización: ${ahora.toLocaleTimeString('es-VE')}`;
+            }
+        }
+
+        // ==================================================================
+        // ==================== ACTUALIZAR INTERFAZ =========================
+        // ==================================================================
+        function actualizarInterfazSorteo() {
+            const fechaEl = document.getElementById('fecha-sorteo-texto');
+            if (fechaEl) fechaEl.textContent = 'Resultados: ' + sorteoData.fecha;
+
+            renderizarGridNumeros();
+            renderizarListaOcupados();
+
+            // Contar participantes (objeto → array)
+            const totalParticipantes = Object.keys(sorteoData.participantes || {}).length;
+            const totalOcupados = Object.keys(sorteoData.numerosOcupados || {}).length;
+
+            const statPart = document.getElementById('stat-participantes');
+            const statLib = document.getElementById('stat-libres');
+            const contLib = document.getElementById('contador-libres');
+
+            if (statPart) statPart.textContent = totalParticipantes;
+            if (statLib) statLib.textContent = 500 - totalOcupados;
+            if (contLib) contLib.textContent = 500 - totalOcupados;
+
+            renderizarAdminParticipantes();
+
+            // Ganador
+            const ganBox = document.getElementById('admin-ganador-box');
+            if (ganBox) {
+                const ganadoresArray = Object.values(sorteoData.ganadores || {});
+                if (ganadoresArray.length > 0) {
+                    mostrarGanadorAdmin(ganadoresArray[ganadoresArray.length - 1]);
+                } else {
+                    ganBox.classList.add('hidden');
+                }
+            }
+        }
+
+        // ==================================================================
+        // ==================== RENDERIZAR GRID DE NÚMEROS ==================
+        // ==================================================================
+        function renderizarGridNumeros() {
+            const grid = document.getElementById('grid-numeros');
+            if (!grid) return;
+
+            const ocupados = sorteoData.numerosOcupados || {};
+            let html = '';
+
+            for (let i = 1; i <= 500; i++) {
+                const ocupado = !!ocupados[i];
+                const reservado = !!numerosReservadosTemp[i];
+                const seleccionado = numeroSeleccionado === i;
+
+                let clase = 'numero-btn ';
+                if (seleccionado) clase += 'seleccionado';
+                else if (ocupado) clase += 'ocupado';
+                else if (reservado) clase += 'bloqueado-temporal';
+                else clase += 'libre';
+
+                const deshabilitado = (ocupado || reservado) && !seleccionado;
+                html += `<button class="${clase}" data-numero="${i}" ${deshabilitado ? 'disabled' : ''} onclick="seleccionarNumero(${i})">${i}</button>`;
+            }
+            grid.innerHTML = html;
+        }
+
+        function seleccionarNumero(num) {
+            const ocupados = sorteoData.numerosOcupados || {};
+            if (ocupados[num] || numerosReservadosTemp[num]) return;
+
+            numeroSeleccionado = num;
+            const txt = document.getElementById('numero-seleccionado-texto');
+            const val = document.getElementById('numero-seleccionado-valor');
+            if (txt) txt.classList.remove('hidden');
+            if (val) val.textContent = num;
+            renderizarGridNumeros();
+
+            const btn = document.querySelector(`.numero-btn[data-numero="${num}"]`);
+            if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function toggleNumeros() {
+            const cuadro = document.getElementById('cuadro-numeros');
+            cuadro.classList.toggle('hidden');
+            const btn = document.getElementById('btn-toggle-numeros');
+            if (cuadro.classList.contains('hidden')) {
+                btn.innerHTML = '<i class="fas fa-th mr-2"></i> Ver números disponibles';
+            } else {
+                btn.innerHTML = '<i class="fas fa-times mr-2"></i> Ocultar números';
+            }
+        }
+
+        // ==================================================================
+        // ==================== PARTICIPAR (con transacción) ================
+        // ==================================================================
+        async function participarSorteo() {
+            const nombre = document.getElementById('sorteo-nombre').value.trim();
+            const usuario = document.getElementById('sorteo-usuario').value.trim();
+            const errorEl = document.getElementById('sorteo-error');
+            const errorText = document.getElementById('sorteo-error-text');
+
+            // Validaciones
+            if (!nombre) {
+                errorText.textContent = 'Por favor ingresa tu nombre y apellido.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            if (!usuario) {
+                errorText.textContent = 'Por favor ingresa tu usuario de Instagram o TikTok.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            if (!numeroSeleccionado) {
+                errorText.textContent = 'Por favor selecciona un número de la suerte.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const numFinal = numeroSeleccionado;
+
+            // Marcar como reservado temporalmente (bloqueo visual)
+            numerosReservadosTemp[numFinal] = true;
+            renderizarGridNumeros();
+            errorEl.classList.add('hidden');
+
+            if (firebaseActivo) {
+                try {
+                    // 🎯 TRANSACCIÓN ATÓMICA: evita que dos personas tomen el mismo número
+                    const db = window.firebaseDB;
+                    const ref = window.firebaseRef;
+                    const numRef = ref(db, `sorteo/numerosOcupados/${numFinal}`);
+
+                    const result = await window.firebaseRunTransaction(numRef, (current) => {
+                        if (current === null) {
+                            return true; // libre → lo tomamos
+                        }
+                        return; // abort (ya está ocupado)
+                    });
+
+                    if (!result.committed) {
+                        // Otro usuario lo tomó justo antes
+                        delete numerosReservadosTemp[numFinal];
+                        numeroSeleccionado = null;
+                        document.getElementById('numero-seleccionado-texto').classList.add('hidden');
+                        errorText.textContent = '¡Ups! Alguien acaba de tomar ese número. Elige otro por favor.';
+                        errorEl.classList.remove('hidden');
+                        renderizarGridNumeros();
+                        return;
+                    }
+
+                    // ✅ Número reservado exitosamente — guardar participante
+                    const id = generarID();
+                    const participante = {
+                        nombre: nombre,
+                        usuario: usuario,
+                        numero: numFinal,
+                        fecha: new Date().toLocaleString('es-VE')
+                    };
+
+                    const partRef = ref(db, `sorteo/participantes/${id}`);
+                    await window.firebaseSet(partRef, participante);
+
+                    console.log('✅ Participante registrado en Firebase');
+                } catch(e) {
+                    console.error('❌ Error en transacción:', e);
+                    delete numerosReservadosTemp[numFinal];
+                    errorText.textContent = 'Error de conexión. Revisa tu internet e intenta de nuevo.';
+                    errorEl.classList.remove('hidden');
+                    renderizarGridNumeros();
+                    return;
+                }
+            } else {
+                // Modo local
+                if ((sorteoData.numerosOcupados || {})[numFinal]) {
+                    delete numerosReservadosTemp[numFinal];
+                    errorText.textContent = 'Ese número ya fue ocupado. Elige otro.';
+                    errorEl.classList.remove('hidden');
+                    renderizarGridNumeros();
+                    return;
+                }
+
+                const id = generarID();
+                if (!sorteoData.participantes) sorteoData.participantes = {};
+                if (!sorteoData.numerosOcupados) sorteoData.numerosOcupados = {};
+
+                sorteoData.participantes[id] = {
+                    nombre: nombre,
+                    usuario: usuario,
+                    numero: numFinal,
+                    fecha: new Date().toLocaleString('es-VE')
+                };
+                sorteoData.numerosOcupados[numFinal] = true;
+
+                await guardarSorteo();
+            }
+
+            // Limpiar reserva temporal
+            delete numerosReservadosTemp[numFinal];
+
+            // Mostrar ticket
+            document.getElementById('formulario-sorteo').classList.add('hidden');
+            document.getElementById('ticket-participante').classList.remove('hidden');
+            document.getElementById('ticket-nombre').textContent = nombre;
+            document.getElementById('ticket-numero').textContent = numFinal;
+            document.getElementById('ticket-usuario').textContent = usuario;
+
+            const msg = `¡Hola! Estoy participando en el sorteo de CMOS Shalom 🦷✨%0A%0A👤 Nombre: ${nombre}%0A📱 Usuario: ${usuario}%0A🎟️ Número de la suerte: ${numFinal}%0A%0A¡Deseo ganar una Limpieza Dental GRATIS! 🍀`;
+            document.getElementById('btn-compartir-whatsapp').href = `https://wa.me/?text=${msg}`;
+
+            numeroSeleccionado = null;
+            document.getElementById('numero-seleccionado-texto').classList.add('hidden');
+            renderizarGridNumeros();
+        }
+
+        function nuevoParticipante() {
+            document.getElementById('sorteo-nombre').value = '';
+            document.getElementById('sorteo-usuario').value = '';
+            document.getElementById('ticket-participante').classList.add('hidden');
+            document.getElementById('formulario-sorteo').classList.remove('hidden');
+            document.getElementById('sorteo-error').classList.add('hidden');
+            document.getElementById('cuadro-numeros').classList.add('hidden');
+            document.getElementById('btn-toggle-numeros').innerHTML = '<i class="fas fa-th mr-2"></i> Ver números disponibles';
+            numeroSeleccionado = null;
+            document.getElementById('numero-seleccionado-texto').classList.add('hidden');
+            renderizarGridNumeros();
+        }
+
+        // ==================================================================
+        // ==================== LISTA OCUPADOS ==============================
+        // ==================================================================
+        function renderizarListaOcupados() {
+            const lista = document.getElementById('lista-ocupados');
+            if (!lista) return;
+
+            const participantes = Object.values(sorteoData.participantes || {});
+
+            if (participantes.length === 0) {
+                lista.innerHTML = '<p class="text-gray-400 text-center py-6 italic">Aún no hay números ocupados. ¡Sé el primero!</p>';
+                return;
+            }
+
+            const ordenados = [...participantes].sort((a, b) => a.numero - b.numero);
+            lista.innerHTML = ordenados.map(p => `
+                <div class="participante-row">
+                    <div class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-xl bg-skyBlue flex items-center justify-center font-black text-deepBlue text-sm">${p.numero}</span>
+                        <div>
+                            <p class="font-bold text-deepBlue text-sm">${p.nombre}</p>
+                            <p class="text-xs text-gray-400">${p.usuario}</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+            `).join('');
+        }
+
+        // ==================================================================
+        // ==================== PANEL ADMIN =================================
+        // ==================================================================
+        function openAdmin() {
+            document.getElementById('admin-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('admin-login-view').classList.remove('hidden');
+            document.getElementById('admin-panel-view').classList.add('hidden');
+            document.getElementById('admin-password').value = '';
+            document.getElementById('admin-error').classList.add('hidden');
+        }
+
+        function closeAdmin() {
+            document.getElementById('admin-modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('admin-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeAdmin();
+        });
+
+        function loginAdmin() {
+            const pass = document.getElementById('admin-password').value;
+            if (pass === ADMIN_PASSWORD) {
+                document.getElementById('admin-login-view').classList.add('hidden');
+                document.getElementById('admin-panel-view').classList.remove('hidden');
+                document.getElementById('admin-error').classList.add('hidden');
+                document.getElementById('admin-fecha-sorteo').value = sorteoData.fecha;
+                document.getElementById('admin-premio').value = sorteoData.premio;
+                renderizarAdminParticipantes();
+                const ganadores = Object.values(sorteoData.ganadores || {});
+                if (ganadores.length > 0) {
+                    mostrarGanadorAdmin(ganadores[ganadores.length - 1]);
+                }
+            } else {
+                document.getElementById('admin-error').classList.remove('hidden');
+            }
+        }
+
+        async function crearSorteo() {
+            const fecha = document.getElementById('admin-fecha-sorteo').value.trim();
+            const premio = document.getElementById('admin-premio').value.trim();
+            if (!fecha) { alert('Por favor ingresa una fecha para el sorteo.'); return; }
+            if (!premio) { alert('Por favor ingresa el premio del sorteo.'); return; }
+
+            sorteoData.fecha = fecha;
+            sorteoData.premio = premio;
+
+            if (firebaseActivo) {
+                const db = window.firebaseDB;
+                const ref = window.firebaseRef;
+                const sorteoRef = ref(db, 'sorteo');
+                await window.firebaseUpdate(sorteoRef, { fecha, premio });
+            } else {
+                await guardarSorteo();
+            }
+
+            actualizarInterfazSorteo();
+            alert('✅ Sorteo configurado correctamente.');
+        }
+
+        async function reiniciarSorteo() {
+            if (!confirm('⚠️ ¿Estás seguro de reiniciar el sorteo? Se eliminarán TODOS los participantes, números y ganadores.')) return;
+            if (!confirm('⚠️ ÚLTIMA ADVERTENCIA: Esta acción no se puede deshacer. ¿Continuar?')) return;
+
+            const datosNuevos = {
+                fecha: sorteoData.fecha,
+                premio: sorteoData.premio,
+                participantes: {},
+                numerosOcupados: {},
+                ganadores: {}
+            };
+
+            sorteoData = { ...datosNuevos };
+            numeroSeleccionado = null;
+            numerosReservadosTemp = {};
+
+            if (firebaseActivo) {
+                const db = window.firebaseDB;
+                const ref = window.firebaseRef;
+                const sorteoRef = ref(db, 'sorteo');
+                await window.firebaseSet(sorteoRef, datosNuevos);
+            } else {
+                await guardarSorteo();
+            }
+
+            // Reset UI
+            document.getElementById('admin-ganador-box').classList.add('hidden');
+            document.getElementById('formulario-sorteo').classList.remove('hidden');
+            document.getElementById('ticket-participante').classList.add('hidden');
+            document.getElementById('cuadro-numeros').classList.add('hidden');
+            document.getElementById('btn-toggle-numeros').innerHTML = '<i class="fas fa-th mr-2"></i> Ver números disponibles';
+            document.getElementById('numero-seleccionado-texto').classList.add('hidden');
+            document.getElementById('sorteo-nombre').value = '';
+            document.getElementById('sorteo-usuario').value = '';
+            document.getElementById('sorteo-error').classList.add('hidden');
+
+            actualizarInterfazSorteo();
+            alert('✅ Sorteo reiniciado correctamente.');
+        }
+
+        async function sortearGanador() {
+            const participantes = Object.entries(sorteoData.participantes || {});
+            const ganadores = sorteoData.ganadores || {};
+
+            // Filtrar los que NO han ganado
+            const ganadoresNumeros = new Set(Object.values(ganadores).map(g => g.numero));
+            const elegibles = participantes.filter(([id, p]) => !ganadoresNumeros.has(p.numero));
+
+            if (elegibles.length === 0) {
+                alert('⚠️ No hay participantes elegibles. Todos ya han ganado o no hay registros.');
+                return;
+            }
+
+            // Selección aleatoria criptográficamente segura
+            const randomArray = new Uint32Array(1);
+            crypto.getRandomValues(randomArray);
+            const indice = randomArray[0] % elegibles.length;
+            const [idGanador, ganador] = elegibles[indice];
+
+            // Guardar ganador con ID único
+            const idGan = generarID();
+            if (!sorteoData.ganadores) sorteoData.ganadores = {};
+            sorteoData.ganadores[idGan] = ganador;
+
+            if (firebaseActivo) {
+                const db = window.firebaseDB;
+                const ref = window.firebaseRef;
+                const ganRef = ref(db, `sorteo/ganadores/${idGan}`);
+                await window.firebaseSet(ganRef, ganador);
+            } else {
+                await guardarSorteo();
+            }
+
+            mostrarAnimacionSorteo(ganador);
+        }
+
+        function mostrarAnimacionSorteo(ganador) {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed; inset: 0; background: rgba(10, 47, 108, 0.95);
+                z-index: 9999; display: flex; flex-direction: column;
+                justify-content: center; align-items: center; padding: 20px;
+                backdrop-filter: blur(10px);
+            `;
+            overlay.innerHTML = `
+                <div style="text-align: center; animation: modalPop 0.5s ease;">
+                    <i class="fas fa-dice" style="font-size: 5rem; color: #D4AF37; animation: toothFloat 1s infinite;"></i>
+                    <h2 style="color: white; font-size: 3rem; font-weight: 900; margin: 20px 0;">Sorteando...</h2>
+                    <p style="color: #D4AF37; font-size: 1.5rem; font-weight: 700;">Eligiendo ganador aleatoriamente</p>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            const participantes = Object.values(sorteoData.participantes || {});
+
+            const intervalo = setInterval(() => {
+                const temp = participantes[Math.floor(Math.random() * participantes.length)];
+                const numEl = overlay.querySelector('p');
+                if (numEl && temp) {
+                    numEl.textContent = `Número: ${temp.numero}`;
+                    numEl.style.fontSize = '3rem';
+                    numEl.style.color = '#F0D060';
+                }
+            }, 100);
+
+            setTimeout(() => {
+                clearInterval(intervalo);
+                overlay.innerHTML = `
+                    <div style="text-align: center; animation: modalPop 0.6s ease;">
+                        <p style="color: #D4AF37; font-size: 1.2rem; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase;">¡Tenemos un ganador!</p>
+                        <h2 style="color: white; font-size: 2.5rem; font-weight: 900; margin: 10px 0;">${ganador.nombre}</h2>
+                        <p style="color: #D4AF37; font-size: 6rem; font-weight: 900; line-height: 1; text-shadow: 0 0 40px rgba(212,175,55,0.8);">${ganador.numero}</p>
+                        <p style="color: #93c5fd; font-size: 1.2rem; margin-top: 10px;">${ganador.usuario}</p>
+                        <p style="color: #22c55e; font-size: 1.5rem; font-weight: 900; margin-top: 30px;">🎉 ¡FELICIDADES! 🎉</p>
+                        <button onclick="this.closest('div').parentElement.remove(); mostrarGanadorAdmin(${JSON.stringify(ganador).replace(/"/g, '&quot;')})"
+                                style="margin-top: 30px; padding: 15px 40px; border-radius: 20px; border: none;
+                                background: linear-gradient(135deg, #D4AF37, #F0D060); color: #0A2F6C;
+                                font-weight: 900; font-size: 1.2rem; cursor: pointer;">
+                            <i class="fas fa-check"></i> Ver en el panel
+                        </button>
+                    </div>
+                `;
+            }, 3000);
+        }
+
+        function mostrarGanadorAdmin(ganador) {
+            if (!ganador) return;
+            document.getElementById('admin-ganador-box').classList.remove('hidden');
+            document.getElementById('admin-ganador-nombre').textContent = ganador.nombre;
+            document.getElementById('admin-ganador-ticket').textContent = ganador.numero;
+            document.getElementById('admin-ganador-red').textContent = ganador.usuario;
+        }
+
+        function renderizarAdminParticipantes() {
+            const lista = document.getElementById('admin-participantes-list');
+            const total = document.getElementById('admin-total');
+            if (!lista || !total) return;
+
+            const participantes = Object.values(sorteoData.participantes || {});
+            total.textContent = participantes.length;
+
+            if (participantes.length === 0) {
+                lista.innerHTML = '<p class="text-gray-400 text-center py-8 italic">No hay participantes aún.</p>';
+                return;
+            }
+
+            const ganadoresNumeros = new Set(Object.values(sorteoData.ganadores || {}).map(g => g.numero));
+            const ordenados = [...participantes].sort((a, b) => a.numero - b.numero);
+
+            lista.innerHTML = ordenados.map(p => {
+                const esGanador = ganadoresNumeros.has(p.numero);
+                return `
+                    <div class="participante-row ${esGanador ? 'ganador-row' : ''}">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-xl ${esGanador ? 'gold-gradient' : 'bg-skyBlue'} flex items-center justify-center font-black text-deepBlue text-sm">
+                                ${esGanador ? '<i class="fas fa-crown"></i>' : p.numero}
+                            </span>
+                            <div>
+                                <p class="font-bold text-deepBlue text-sm">${p.nombre}</p>
+                                <p class="text-xs text-gray-400">${p.usuario} · Nº ${p.numero}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${esGanador ? '<span class="text-xs font-black gold-text">GANADOR</span>' : ''}
+                            <span class="text-xs text-gray-300">${p.fecha}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function exportarParticipantes() {
+            const participantes = Object.values(sorteoData.participantes || {});
+            if (participantes.length === 0) {
+                alert('No hay participantes para exportar.');
+                return;
+            }
+            const ganadoresNumeros = new Set(Object.values(sorteoData.ganadores || {}).map(g => g.numero));
+
+            let csv = 'Nombre,Usuario,Numero,Fecha,EsGanador\n';
+            participantes.forEach(p => {
+                const esGanador = ganadoresNumeros.has(p.numero);
+                csv += `"${p.nombre}","${p.usuario}",${p.numero},"${p.fecha}",${esGanador ? 'Sí' : 'No'}\n`;
+            });
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `participantes_sorteo_CMOS_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+        }
+
+        // ==================================================================
+        // ==================== INICIALIZAR TODO ============================
+        // ==================================================================
+        window.addEventListener('firebase-ready', () => {
+            inicializarFirebase();
+        });
+
+        // Si Firebase no carga en 2 segundos, arrancar en modo local
+        setTimeout(() => {
+            if (!firebaseActivo) {
+                inicializarFirebase();
+            }
+        }, 2000);
+
+        // ===== MENÚ MÓVIL =====
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
         }
 
+        // ===== CHATBOT =====
         function toggleChat() {
             const chat = document.getElementById('chat-window');
             chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
@@ -1005,11 +1735,10 @@
         }
 
         document.getElementById('chat-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendUserMessage();
-            }
+            if (e.key === 'Enter') sendUserMessage();
         });
 
+        // ===== VIDEOLLAMADA MODAL =====
         function openVideocall() {
             document.getElementById('videocall-modal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1024,524 +1753,6 @@
             if (e.target === this) closeVideocall();
         });
 
-        // ==================================================================
-        // ==================== LÓGICA DEL SORTEO ===========================
-        // ==================================================================
-
-        const ADMIN_PASSWORD = 'CMOS2026admin';
-
-        let sorteoData = {
-            fecha: 'Por definir',
-            premio: 'Limpieza Dental GRATIS',
-            participantes: [],
-            ganadores: [],
-            numerosOcupados: []
-        };
-
-        let numeroSeleccionado = null;
-        let syncTimer = null;
-        let ultimaVersion = null;
-
-        // ===== CARGAR DATOS (NUBE o LOCAL) =====
-        async function cargarSorteo() {
-            if (USAR_NUBE) {
-                try {
-                    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
-                        headers: { 'X-Master-Key': JSONBIN_KEY }
-                    });
-                    if (res.ok) {
-                        const json = await res.json();
-                        if (json.record) {
-                            sorteoData = { ...sorteoData, ...json.record };
-                            ultimaVersion = JSON.stringify(json.record);
-                        }
-                    }
-                } catch(e) {
-                    console.warn('Error cargando de la nube, usando local:', e);
-                    cargarLocal();
-                }
-            } else {
-                cargarLocal();
-            }
-            actualizarInterfazSorteo();
-            actualizarTimestamp();
-        }
-
-        function cargarLocal() {
-            const guardado = localStorage.getItem('cmos_sorteo');
-            if (guardado) {
-                try {
-                    sorteoData = JSON.parse(guardado);
-                } catch(e) {
-                    console.error('Error cargando sorteo local:', e);
-                }
-            }
-        }
-
-        // ===== GUARDAR DATOS (NUBE o LOCAL) =====
-        async function guardarSorteo(silencioso = false) {
-            // Siempre guardamos local como respaldo
-            localStorage.setItem('cmos_sorteo', JSON.stringify(sorteoData));
-
-            if (USAR_NUBE) {
-                try {
-                    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Master-Key': JSONBIN_KEY
-                        },
-                        body: JSON.stringify(sorteoData)
-                    });
-                    ultimaVersion = JSON.stringify(sorteoData);
-                } catch(e) {
-                    console.warn('Error guardando en la nube:', e);
-                    if (!silencioso) alert('⚠️ No se pudo sincronizar con la nube. Los datos se guardaron localmente.');
-                }
-            }
-
-            actualizarInterfazSorteo();
-            actualizarTimestamp();
-        }
-
-        // ===== SINCRONIZACIÓN AUTOMÁTICA (PULL) =====
-        async function sincronizarDesdeNube() {
-            if (!USAR_NUBE) return;
-            try {
-                const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
-                    headers: { 'X-Master-Key': JSONBIN_KEY }
-                });
-                if (res.ok) {
-                    const json = await res.json();
-                    if (json.record) {
-                        const nuevaVersion = JSON.stringify(json.record);
-                        if (nuevaVersion !== ultimaVersion) {
-                            ultimaVersion = nuevaVersion;
-                            sorteoData = { ...sorteoData, ...json.record };
-                            localStorage.setItem('cmos_sorteo', JSON.stringify(sorteoData));
-                            actualizarInterfazSorteo();
-                            actualizarTimestamp();
-                        }
-                    }
-                }
-            } catch(e) {
-                console.warn('Error en sincronización:', e);
-            }
-        }
-
-        // ===== ACTUALIZAR TIMESTAMP =====
-        function actualizarTimestamp() {
-            const el = document.getElementById('ultima-actualizacion');
-            if (el) {
-                const ahora = new Date();
-                el.textContent = `Actualizado: ${ahora.toLocaleTimeString('es-VE')}`;
-            }
-            const icon = document.getElementById('sync-icon');
-            if (icon) {
-                icon.style.animation = 'none';
-                setTimeout(() => { icon.style.animation = 'spin 1s ease'; }, 10);
-            }
-        }
-
-        // ===== ACTUALIZAR INTERFAZ =====
-        function actualizarInterfazSorteo() {
-            const fechaEl = document.getElementById('fecha-sorteo-texto');
-            if (fechaEl) fechaEl.textContent = 'Resultados: ' + sorteoData.fecha;
-
-            renderizarGridNumeros();
-            renderizarListaOcupados();
-
-            const statPart = document.getElementById('stat-participantes');
-            const statLib = document.getElementById('stat-libres');
-            const contLib = document.getElementById('contador-libres');
-
-            if (statPart) statPart.textContent = sorteoData.participantes.length;
-            if (statLib) statLib.textContent = 500 - sorteoData.numerosOcupados.length;
-            if (contLib) contLib.textContent = 500 - sorteoData.numerosOcupados.length;
-
-            renderizarAdminParticipantes();
-            const ganBox = document.getElementById('admin-ganador-box');
-            if (ganBox) {
-                if (sorteoData.ganadores.length > 0) {
-                    mostrarGanadorAdmin(sorteoData.ganadores[sorteoData.ganadores.length - 1]);
-                } else {
-                    ganBox.classList.add('hidden');
-                }
-            }
-        }
-
-        function renderizarGridNumeros() {
-            const grid = document.getElementById('grid-numeros');
-            if (!grid) return;
-            let html = '';
-            for (let i = 1; i <= 500; i++) {
-                const ocupado = sorteoData.numerosOcupados.includes(i);
-                const seleccionado = numeroSeleccionado === i;
-                let clase = 'numero-btn ';
-                if (seleccionado) clase += 'seleccionado';
-                else if (ocupado) clase += 'ocupado';
-                else clase += 'libre';
-                html += `<button class="${clase}" data-numero="${i}" ${ocupado && !seleccionado ? 'disabled' : ''} onclick="seleccionarNumero(${i})">${i}</button>`;
-            }
-            grid.innerHTML = html;
-        }
-
-        function seleccionarNumero(num) {
-            if (sorteoData.numerosOcupados.includes(num)) return;
-            numeroSeleccionado = num;
-            const txt = document.getElementById('numero-seleccionado-texto');
-            const val = document.getElementById('numero-seleccionado-valor');
-            if (txt) txt.classList.remove('hidden');
-            if (val) val.textContent = num;
-            renderizarGridNumeros();
-            const btn = document.querySelector(`.numero-btn[data-numero="${num}"]`);
-            if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function toggleNumeros() {
-            const cuadro = document.getElementById('cuadro-numeros');
-            cuadro.classList.toggle('hidden');
-            const btn = document.getElementById('btn-toggle-numeros');
-            if (cuadro.classList.contains('hidden')) {
-                btn.innerHTML = '<i class="fas fa-th mr-2"></i> Ver números disponibles';
-            } else {
-                btn.innerHTML = '<i class="fas fa-times mr-2"></i> Ocultar números';
-            }
-        }
-
-        async function participarSorteo() {
-            const nombre = document.getElementById('sorteo-nombre').value.trim();
-            const usuario = document.getElementById('sorteo-usuario').value.trim();
-            const errorEl = document.getElementById('sorteo-error');
-            const errorText = document.getElementById('sorteo-error-text');
-
-            if (!nombre) {
-                errorText.textContent = 'Por favor ingresa tu nombre y apellido.';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            if (!usuario) {
-                errorText.textContent = 'Por favor ingresa tu usuario de Instagram o TikTok.';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-            if (!numeroSeleccionado) {
-                errorText.textContent = 'Por favor selecciona un número de la suerte.';
-                errorEl.classList.remove('hidden');
-                return;
-            }
-
-            // 🔄 Refrescar datos antes de validar (para evitar conflictos entre usuarios)
-            if (USAR_NUBE) {
-                await sincronizarDesdeNube();
-            }
-
-            if (sorteoData.numerosOcupados.includes(numeroSeleccionado)) {
-                errorText.textContent = 'Ese número acaba de ser ocupado por otra persona. Elige otro.';
-                errorEl.classList.remove('hidden');
-                renderizarGridNumeros();
-                numeroSeleccionado = null;
-                document.getElementById('numero-seleccionado-texto').classList.add('hidden');
-                return;
-            }
-
-            errorEl.classList.add('hidden');
-
-            const participante = {
-                nombre: nombre,
-                usuario: usuario,
-                numero: numeroSeleccionado,
-                fecha: new Date().toLocaleString('es-VE')
-            };
-
-            sorteoData.participantes.push(participante);
-            sorteoData.numerosOcupados.push(numeroSeleccionado);
-
-            await guardarSorteo();
-
-            document.getElementById('formulario-sorteo').classList.add('hidden');
-            document.getElementById('ticket-participante').classList.remove('hidden');
-            document.getElementById('ticket-nombre').textContent = nombre;
-            document.getElementById('ticket-numero').textContent = numeroSeleccionado;
-            document.getElementById('ticket-usuario').textContent = usuario;
-
-            const msg = `¡Hola! Estoy participando en el sorteo de CMOS Shalom 🦷✨%0A%0A👤 Nombre: ${nombre}%0A📱 Usuario: ${usuario}%0A🎟️ Número de la suerte: ${numeroSeleccionado}%0A%0A¡Deseo ganar una Limpieza Dental GRATIS! 🍀`;
-            document.getElementById('btn-compartir-whatsapp').href = `https://wa.me/?text=${msg}`;
-
-            numeroSeleccionado = null;
-            document.getElementById('numero-seleccionado-texto').classList.add('hidden');
-            renderizarGridNumeros();
-        }
-
-        function nuevoParticipante() {
-            document.getElementById('sorteo-nombre').value = '';
-            document.getElementById('sorteo-usuario').value = '';
-            document.getElementById('ticket-participante').classList.add('hidden');
-            document.getElementById('formulario-sorteo').classList.remove('hidden');
-            document.getElementById('sorteo-error').classList.add('hidden');
-            document.getElementById('cuadro-numeros').classList.add('hidden');
-            document.getElementById('btn-toggle-numeros').innerHTML = '<i class="fas fa-th mr-2"></i> Ver números disponibles';
-            numeroSeleccionado = null;
-            document.getElementById('numero-seleccionado-texto').classList.add('hidden');
-            renderizarGridNumeros();
-        }
-
-        function renderizarListaOcupados() {
-            const lista = document.getElementById('lista-ocupados');
-            if (!lista) return;
-            if (sorteoData.participantes.length === 0) {
-                lista.innerHTML = '<p class="text-gray-400 text-center py-6 italic">Aún no hay números ocupados. ¡Sé el primero!</p>';
-                return;
-            }
-            const ordenados = [...sorteoData.participantes].sort((a, b) => a.numero - b.numero);
-            lista.innerHTML = ordenados.map(p => `
-                <div class="participante-row">
-                    <div class="flex items-center gap-3">
-                        <span class="w-10 h-10 rounded-xl bg-skyBlue flex items-center justify-center font-black text-deepBlue text-sm">${p.numero}</span>
-                        <div>
-                            <p class="font-bold text-deepBlue text-sm">${p.nombre}</p>
-                            <p class="text-xs text-gray-400">${p.usuario}</p>
-                        </div>
-                    </div>
-                    <i class="fas fa-check-circle text-green-500"></i>
-                </div>
-            `).join('');
-        }
-
-        // ==================================================================
-        // ==================== PANEL ADMIN =================================
-        // ==================================================================
-
-        function openAdmin() {
-            document.getElementById('admin-modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            document.getElementById('admin-login-view').classList.remove('hidden');
-            document.getElementById('admin-panel-view').classList.add('hidden');
-            document.getElementById('admin-password').value = '';
-            document.getElementById('admin-error').classList.add('hidden');
-        }
-
-        function closeAdmin() {
-            document.getElementById('admin-modal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        document.getElementById('admin-modal').addEventListener('click', function(e) {
-            if (e.target === this) closeAdmin();
-        });
-
-        function loginAdmin() {
-            const pass = document.getElementById('admin-password').value;
-            if (pass === ADMIN_PASSWORD) {
-                document.getElementById('admin-login-view').classList.add('hidden');
-                document.getElementById('admin-panel-view').classList.remove('hidden');
-                document.getElementById('admin-error').classList.add('hidden');
-                document.getElementById('admin-fecha-sorteo').value = sorteoData.fecha;
-                document.getElementById('admin-premio').value = sorteoData.premio;
-                renderizarAdminParticipantes();
-                if (sorteoData.ganadores.length > 0) {
-                    mostrarGanadorAdmin(sorteoData.ganadores[sorteoData.ganadores.length - 1]);
-                }
-            } else {
-                document.getElementById('admin-error').classList.remove('hidden');
-            }
-        }
-
-        async function crearSorteo() {
-            const fecha = document.getElementById('admin-fecha-sorteo').value.trim();
-            const premio = document.getElementById('admin-premio').value.trim();
-            if (!fecha) { alert('Por favor ingresa una fecha para el sorteo.'); return; }
-            if (!premio) { alert('Por favor ingresa el premio del sorteo.'); return; }
-            sorteoData.fecha = fecha;
-            sorteoData.premio = premio;
-            await guardarSorteo();
-            alert('✅ Sorteo configurado correctamente.');
-        }
-
-        async function reiniciarSorteo() {
-            if (!confirm('⚠️ ¿Estás seguro de reiniciar el sorteo? Se eliminarán TODOS los participantes, números y ganadores.')) return;
-            if (!confirm('⚠️ ÚLTIMA ADVERTENCIA: Esta acción no se puede deshacer. ¿Continuar?')) return;
-
-            sorteoData.participantes = [];
-            sorteoData.numerosOcupados = [];
-            sorteoData.ganadores = [];
-            numeroSeleccionado = null;
-            await guardarSorteo();
-
-            document.getElementById('admin-ganador-box').classList.add('hidden');
-            document.getElementById('formulario-sorteo').classList.remove('hidden');
-            document.getElementById('ticket-participante').classList.add('hidden');
-            document.getElementById('cuadro-numeros').classList.add('hidden');
-            document.getElementById('btn-toggle-numeros').innerHTML = '<i class="fas fa-th mr-2"></i> Ver números disponibles';
-            document.getElementById('numero-seleccionado-texto').classList.add('hidden');
-            document.getElementById('sorteo-nombre').value = '';
-            document.getElementById('sorteo-usuario').value = '';
-            document.getElementById('sorteo-error').classList.add('hidden');
-
-            renderizarGridNumeros();
-            renderizarListaOcupados();
-            renderizarAdminParticipantes();
-            actualizarInterfazSorteo();
-
-            alert('✅ Sorteo reiniciado correctamente. ¡Todo listo para comenzar de nuevo!');
-        }
-
-        async function sortearGanador() {
-            // Refrescar antes de sortear para tener lo último
-            if (USAR_NUBE) await sincronizarDesdeNube();
-
-            const elegibles = sorteoData.participantes.filter(p =>
-                !sorteoData.ganadores.some(g => g.numero === p.numero)
-            );
-
-            if (elegibles.length === 0) {
-                alert('⚠️ No hay participantes elegibles. Todos ya han ganado o no hay registros.');
-                return;
-            }
-
-            const indice = Math.floor(Math.random() * elegibles.length);
-            const ganador = elegibles[indice];
-
-            sorteoData.ganadores.push(ganador);
-            await guardarSorteo();
-
-            mostrarAnimacionSorteo(ganador);
-        }
-
-        function mostrarAnimacionSorteo(ganador) {
-            const overlay = document.createElement('div');
-            overlay.style.cssText = `
-                position: fixed; inset: 0; background: rgba(10, 47, 108, 0.95);
-                z-index: 9999; display: flex; flex-direction: column;
-                justify-content: center; align-items: center; padding: 20px;
-                backdrop-filter: blur(10px);
-            `;
-            overlay.innerHTML = `
-                <div style="text-align: center; animation: modalPop 0.5s ease;">
-                    <i class="fas fa-dice" style="font-size: 5rem; color: #D4AF37; animation: toothFloat 1s infinite;"></i>
-                    <h2 style="color: white; font-size: 3rem; font-weight: 900; margin: 20px 0;">Sorteando...</h2>
-                    <p style="color: #D4AF37; font-size: 1.5rem; font-weight: 700;">Eligiendo ganador aleatoriamente</p>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-
-            const intervalo = setInterval(() => {
-                const temp = sorteoData.participantes[Math.floor(Math.random() * sorteoData.participantes.length)];
-                const numEl = overlay.querySelector('p');
-                if (numEl) {
-                    numEl.textContent = `Número: ${temp ? temp.numero : '...'}`;
-                    numEl.style.fontSize = '3rem';
-                    numEl.style.color = '#F0D060';
-                }
-            }, 100);
-
-            setTimeout(() => {
-                clearInterval(intervalo);
-                overlay.innerHTML = `
-                    <div style="text-align: center; animation: modalPop 0.6s ease;">
-                        <p style="color: #D4AF37; font-size: 1.2rem; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase;">¡Tenemos un ganador!</p>
-                        <h2 style="color: white; font-size: 2.5rem; font-weight: 900; margin: 10px 0;">${ganador.nombre}</h2>
-                        <p style="color: #D4AF37; font-size: 6rem; font-weight: 900; line-height: 1; text-shadow: 0 0 40px rgba(212,175,55,0.8);">${ganador.numero}</p>
-                        <p style="color: #93c5fd; font-size: 1.2rem; margin-top: 10px;">${ganador.usuario}</p>
-                        <p style="color: #22c55e; font-size: 1.5rem; font-weight: 900; margin-top: 30px;">🎉 ¡FELICIDADES! 🎉</p>
-                        <button onclick="this.closest('div').parentElement.remove(); mostrarGanadorAdmin(${JSON.stringify(ganador).replace(/"/g, '&quot;')})"
-                                style="margin-top: 30px; padding: 15px 40px; border-radius: 20px; border: none;
-                                background: linear-gradient(135deg, #D4AF37, #F0D060); color: #0A2F6C;
-                                font-weight: 900; font-size: 1.2rem; cursor: pointer;">
-                            <i class="fas fa-check"></i> Ver en el panel
-                        </button>
-                    </div>
-                `;
-            }, 3000);
-        }
-
-        function mostrarGanadorAdmin(ganador) {
-            if (!ganador) return;
-            document.getElementById('admin-ganador-box').classList.remove('hidden');
-            document.getElementById('admin-ganador-nombre').textContent = ganador.nombre;
-            document.getElementById('admin-ganador-ticket').textContent = ganador.numero;
-            document.getElementById('admin-ganador-red').textContent = ganador.usuario;
-        }
-
-        function renderizarAdminParticipantes() {
-            const lista = document.getElementById('admin-participantes-list');
-            const total = document.getElementById('admin-total');
-            if (!lista || !total) return;
-
-            total.textContent = sorteoData.participantes.length;
-
-            if (sorteoData.participantes.length === 0) {
-                lista.innerHTML = '<p class="text-gray-400 text-center py-8 italic">No hay participantes aún.</p>';
-                return;
-            }
-
-            const ordenados = [...sorteoData.participantes].sort((a, b) => a.numero - b.numero);
-            lista.innerHTML = ordenados.map(p => {
-                const esGanador = sorteoData.ganadores.some(g => g.numero === p.numero);
-                return `
-                    <div class="participante-row ${esGanador ? 'ganador-row' : ''}">
-                        <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 rounded-xl ${esGanador ? 'gold-gradient' : 'bg-skyBlue'} flex items-center justify-center font-black text-deepBlue text-sm">
-                                ${esGanador ? '<i class="fas fa-crown"></i>' : p.numero}
-                            </span>
-                            <div>
-                                <p class="font-bold text-deepBlue text-sm">${p.nombre}</p>
-                                <p class="text-xs text-gray-400">${p.usuario} · Nº ${p.numero}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            ${esGanador ? '<span class="text-xs font-black gold-text">GANADOR</span>' : ''}
-                            <span class="text-xs text-gray-300">${p.fecha}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function exportarParticipantes() {
-            if (sorteoData.participantes.length === 0) {
-                alert('No hay participantes para exportar.');
-                return;
-            }
-            let csv = 'Nombre,Usuario,Numero,Fecha,EsGanador\n';
-            sorteoData.participantes.forEach(p => {
-                const esGanador = sorteoData.ganadores.some(g => g.numero === p.numero);
-                csv += `"${p.nombre}","${p.usuario}",${p.numero},"${p.fecha}",${esGanador ? 'Sí' : 'No'}\n`;
-            });
-            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `participantes_sorteo_CMOS_${new Date().toISOString().slice(0,10)}.csv`;
-            link.click();
-        }
-
-        // ===== INICIALIZAR =====
-        document.addEventListener('DOMContentLoaded', async function() {
-            await cargarSorteo();
-
-            // Iniciar sincronización automática
-            if (USAR_NUBE) {
-                syncTimer = setInterval(sincronizarDesdeNube, SYNC_INTERVAL);
-                console.log('✅ Sincronización en la nube activada (cada ' + SYNC_INTERVAL/1000 + 's)');
-            } else {
-                console.log('ℹ️ Modo LOCAL activado. Configura JSONBIN_ID y JSONBIN_KEY para sincronización en tiempo real.');
-            }
-
-            document.getElementById('admin-password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') loginAdmin();
-            });
-
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (!document.getElementById('admin-modal').classList.contains('active')) {
-                        document.getElementById('admin-login-view').classList.remove('hidden');
-                        document.getElementById('admin-panel-view').classList.add('hidden');
-                    }
-                });
-            });
-            observer.observe(document.getElementById('admin-modal'), { attributes: true });
-        });
-
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeVideocall();
@@ -1549,12 +1760,12 @@
             }
         });
 
-        // Animación del icono de sync
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        `;
-        document.head.appendChild(style);
+        // Inicializar al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('admin-password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') loginAdmin();
+            });
+        });
     </script>
 </body>
 </html>
